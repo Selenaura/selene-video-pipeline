@@ -1,0 +1,143 @@
+{
+  "lesson_id": "M01_Q01",
+  "course": "Despierta tu Brújula Interior",
+  "module": 1,
+  "module_name": "Fundamentos de consciencia",
+  "title": "Quiz: Fundamentos de consciencia",
+  "type": "quiz",
+  "passing_score": 0.7,
+  "instructions": "10 preguntas sobre las lecciones 1-3 del Módulo 1. Necesitas acertar al menos 7 para aprobar.",
+
+  "questions": [
+    {
+      "id": 1,
+      "source_lesson": "M01_L01",
+      "q": "¿Qué demostró el estudio de Hölzel et al. (2011) publicado en Psychiatry Research?",
+      "opts": [
+        "Que la Luna afecta el estado de ánimo",
+        "Que 8 semanas de meditación cambian la densidad de materia gris",
+        "Que los signos zodiacales determinan la personalidad",
+        "Que la intuición no existe"
+      ],
+      "answer": 1,
+      "why": "Hölzel (2011) demostró cambios medibles en la materia gris tras 8 semanas de MBSR."
+    },
+    {
+      "id": 2,
+      "source_lesson": "M01_L01",
+      "q": "¿Cuáles son los tres pilares de la espiritualidad consciente según el curso?",
+      "opts": [
+        "Fe, esperanza y caridad",
+        "Atención, autoconocimiento y conexión",
+        "Cuerpo, mente y alma",
+        "Pasado, presente y futuro"
+      ],
+      "answer": 1,
+      "why": "Los tres pilares son: atención (entrenar la mente), autoconocimiento (entender patrones) y conexión (sentirse parte de algo mayor)."
+    },
+    {
+      "id": 3,
+      "source_lesson": "M01_L01",
+      "q": "¿Qué descubrió Sara Lazar en 2005 sobre los meditadores experimentados?",
+      "opts": [
+        "Que su corazón latía más lento",
+        "Que su corteza cerebral era más gruesa",
+        "Que su ADN era diferente",
+        "Que dormían menos horas"
+      ],
+      "answer": 1,
+      "why": "Lazar (2005) publicó en NeuroReport que los meditadores tenían mayor grosor cortical en áreas de atención y percepción."
+    },
+    {
+      "id": 4,
+      "source_lesson": "M01_L02",
+      "q": "¿Quién creó el programa MBSR y en qué año?",
+      "opts": [
+        "Daniel Kahneman en 1995",
+        "Jon Kabat-Zinn en 1979",
+        "Richard Davidson en 2003",
+        "Eleanor Maguire en 2000"
+      ],
+      "answer": 1,
+      "why": "Jon Kabat-Zinn, biólogo molecular del MIT, introdujo el MBSR en el Medical Center de la Universidad de Massachusetts en 1979."
+    },
+    {
+      "id": 5,
+      "source_lesson": "M01_L02",
+      "q": "¿Qué concluyó el meta-análisis de Goyal et al. (2014) publicado en JAMA?",
+      "opts": [
+        "Que la meditación no tiene efectos comprobables",
+        "Que la meditación tiene evidencia moderada para ansiedad, depresión y dolor",
+        "Que solo funciona con medicación simultánea",
+        "Que es efectiva únicamente para monjes"
+      ],
+      "answer": 1,
+      "why": "Goyal (2014) revisó 47 ensayos clínicos con 3,515 participantes y encontró evidencia moderada para reducción de ansiedad, depresión y dolor."
+    },
+    {
+      "id": 6,
+      "source_lesson": "M01_L02",
+      "q": "¿Qué es más importante para obtener beneficios de la meditación?",
+      "opts": [
+        "Meditar en luna llena",
+        "Sesiones de al menos 2 horas",
+        "La regularidad diaria, aunque sea poco tiempo",
+        "Usar incienso y velas"
+      ],
+      "answer": 2,
+      "why": "Tang et al. (2007) demostraron que la práctica breve pero regular produce cambios medibles. La regularidad importa más que la duración."
+    },
+    {
+      "id": 7,
+      "source_lesson": "M01_L03",
+      "q": "¿Qué es la neuroplasticidad?",
+      "opts": [
+        "Una enfermedad degenerativa",
+        "Un tipo de cirugía cerebral",
+        "La capacidad del cerebro de reorganizarse con la experiencia",
+        "La rigidez del cerebro adulto"
+      ],
+      "answer": 2,
+      "why": "La neuroplasticidad es la capacidad del cerebro de cambiar su estructura y funcionamiento en respuesta a la experiencia, a cualquier edad."
+    },
+    {
+      "id": 8,
+      "source_lesson": "M01_L03",
+      "q": "¿Qué descubrió Maguire (2000) al estudiar a los taxistas de Londres?",
+      "opts": [
+        "Que tenían peor memoria que la media",
+        "Que su hipocampo posterior era significativamente más grande",
+        "Que conducir dañaba el cerebro",
+        "Que no había diferencias con el grupo de control"
+      ],
+      "answer": 1,
+      "why": "Maguire encontró que el hipocampo posterior de los taxistas era mayor, proporcional a los años de experiencia, demostrando neuroplasticidad en adultos."
+    },
+    {
+      "id": 9,
+      "source_lesson": "M01_L03",
+      "q": "¿Qué demostró Brewer (2011) sobre la red neuronal por defecto en meditadores?",
+      "opts": [
+        "Que estaba dañada",
+        "Que era más grande",
+        "Que mostraban menos divagación involuntaria y más autoobservación",
+        "Que no tenían red por defecto"
+      ],
+      "answer": 2,
+      "why": "Brewer (2011) publicó en PNAS que los meditadores experimentados muestran menos actividad involuntaria en la default mode network y más capacidad de observar sus pensamientos."
+    },
+    {
+      "id": 10,
+      "source_lesson": "M01_L01",
+      "q": "¿Qué significa que la espiritualidad consciente es 'práctica verificable'?",
+      "opts": [
+        "Que necesitas un certificado para practicarla",
+        "Que puedes medir sus efectos con estudios científicos",
+        "Que solo funciona si crees en ella",
+        "Que es una religión oficial"
+      ],
+      "answer": 1,
+      "why": "La espiritualidad consciente se basa en prácticas cuyos efectos pueden medirse científicamente, como demuestra la investigación en MBSR y neuroplasticidad."
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "lesson_id": "M01_L03",
+  "course": "Despierta tu Brújula Interior",
+  "module": 1,
+  "module_name": "Fundamentos de consciencia",
+  "title": "Tu cerebro como antena: neuroplasticidad",
+  "duration_minutes": 11,
+
+  "slides": [
+    {
+      "n": 1,
+      "type": "title",
+      "title": "Tu cerebro como antena: neuroplasticidad",
+      "subtitle": "Módulo 1 · Lección 3",
+      "narration": "Bienvenida a la tercera lección. Hoy vamos a hablar de la idea más poderosa de la neurociencia moderna… una idea que cambia por completo lo que significa conocerte a ti misma.",
+      "duration_seconds": 13
+    },
+    {
+      "n": 2,
+      "type": "hook",
+      "title": "Hasta los años 90, los neurocientíficos creían que el cerebro adulto no cambiaba",
+      "bullets": [],
+      "narration": "Durante la mayor parte del siglo veinte, la neurociencia aceptaba un dogma: el cerebro adulto es fijo. Naces con un número de neuronas, las vas perdiendo con la edad, y punto. No hay regeneración, no hay cambio. <break time=\"0.8s\"/> Ese dogma resultó ser profundamente equivocado. Y la historia de cómo se derrumbó es una de las más fascinantes de la ciencia moderna.",
+      "duration_seconds": 28
+    },
+    {
+      "n": 3,
+      "type": "content",
+      "title": "¿Qué es la neuroplasticidad?",
+      "bullets": [
+        "Tu cerebro se reorganiza con cada experiencia",
+        "Nuevas conexiones sinápticas cada día",
+        "Lo que repites se fortalece; lo que ignoras se debilita",
+        "Funciona a cualquier edad"
+      ],
+      "narration": "La neuroplasticidad es la capacidad del cerebro de reorganizar su estructura y su funcionamiento en respuesta a la experiencia. Cada vez que aprendes algo nuevo, que repites una acción, que prestas atención a algo de forma sostenida… tu cerebro crea o fortalece conexiones entre neuronas. <break time=\"0.5s\"/> Y lo que no usas… se debilita. Es el principio de use it or lose it. <break time=\"0.5s\"/> Lo más revolucionario es que funciona a cualquier edad. No eres demasiado mayor para cambiar tu cerebro. Merzenich, uno de los padres de la neuroplasticidad, lo demostró en adultos de más de sesenta años.",
+      "citation": "Merzenich, M. M. (2013). Soft-Wired: How the New Science of Brain Plasticity Can Change Your Life. Parnassus Publishing.",
+      "duration_seconds": 40
+    },
+    {
+      "n": 4,
+      "type": "science",
+      "title": "Los taxistas de Londres: un experimento natural",
+      "bullets": [
+        "Maguire 2000: hipocampo más grande en taxistas",
+        "Cuantos más años conduciendo, mayor el cambio",
+        "Al jubilarse, el hipocampo volvía a su tamaño normal"
+      ],
+      "narration": "Te conté brevemente el estudio de Maguire en la primera lección. Ahora vamos a profundizar porque es realmente revelador. <break time=\"0.5s\"/> Eleanor Maguire y su equipo del University College de Londres estudiaron a taxistas que habían aprobado The Knowledge… un examen brutal que requiere memorizar veinticinco mil calles, miles de rutas y cientos de puntos de referencia. <break time=\"0.5s\"/> Mediante resonancias magnéticas descubrieron que el hipocampo posterior de los taxistas era significativamente más grande que el de personas del grupo de control. Y aquí viene lo fascinante: <break time=\"0.5s\"/> cuantos más años llevaban conduciendo, mayor era el cambio. El cerebro había crecido proporcionalmente al entrenamiento. <break time=\"0.5s\"/> Y en un estudio posterior, Maguire descubrió que los taxistas jubilados mostraban una reducción del hipocampo… porque dejaron de usarlo. La neuroplasticidad funciona en ambas direcciones.",
+      "citation": "Maguire, E. A., et al. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403. | Maguire, E. A., et al. (2006). London taxi drivers and bus drivers: A structural MRI and neuropsychological analysis. Hippocampus, 16(12), 1091-1101.",
+      "duration_seconds": 60
+    },
+    {
+      "n": 5,
+      "type": "content",
+      "title": "Neuroplasticidad y autoconocimiento",
+      "bullets": [
+        "Cada práctica de atención cambia tu cerebro",
+        "Meditar fortalece la corteza prefrontal",
+        "Reduces la amígdala: menos reactividad al estrés",
+        "Literalmente puedes entrenar la calma"
+      ],
+      "narration": "¿Y qué tiene que ver todo esto con el autoconocimiento y la espiritualidad consciente? <break time=\"0.5s\"/> Todo. Porque si tu cerebro cambia con lo que practicas… entonces cada vez que meditas, que prestas atención a tus emociones, que observas tus patrones sin juzgarlos… estás literalmente recableando tu cerebro. <break time=\"0.5s\"/> Los estudios lo confirman. La meditación fortalece la corteza prefrontal… que es la zona responsable de la toma de decisiones y la regulación emocional. Y al mismo tiempo reduce la amígdala… que es el centro del miedo y la reactividad. <break time=\"0.5s\"/> Eso significa que puedes entrenar la calma. No es una metáfora. Es anatomía.",
+      "duration_seconds": 40
+    },
+    {
+      "n": 6,
+      "type": "science",
+      "title": "El cerebro que se observa a sí mismo",
+      "bullets": [
+        "Red neuronal por defecto: activa en introspección",
+        "Meditadores: mejor conectividad en esta red",
+        "Brewer 2011: menos divagación mental"
+      ],
+      "narration": "Hay un descubrimiento que conecta directamente la neurociencia con el autoconocimiento. Tu cerebro tiene una red llamada default mode network… la red neuronal por defecto. Se activa cuando no estás haciendo nada específico… cuando tu mente divaga, cuando piensas en ti misma, cuando recuerdas o imaginas el futuro. <break time=\"0.5s\"/> Judson Brewer y su equipo de Yale publicaron en dos mil once que los meditadores experimentados muestran una actividad diferente en esta red. Menos divagación involuntaria y más capacidad de observar sus propios pensamientos sin engancharse a ellos. <break time=\"0.5s\"/> Es literalmente el cerebro que ha aprendido a observarse a sí mismo. Y eso, para el autoconocimiento, lo cambia todo.",
+      "citation": "Brewer, J. A., et al. (2011). Meditation experience is associated with differences in default mode network activity and connectivity. PNAS, 108(50), 20254-20259.",
+      "duration_seconds": 45
+    },
+    {
+      "n": 7,
+      "type": "practice",
+      "title": "Práctica: observar un pensamiento",
+      "bullets": [
+        "Cierra los ojos. Espera a que llegue un pensamiento",
+        "Cuando llegue, no lo sigas. Solo obsérvalo",
+        "Ponle una etiqueta: recuerdo, plan, preocupación",
+        "Déjalo ir y espera al siguiente"
+      ],
+      "narration": "Tu práctica de hoy es un poco más avanzada. Vamos a entrenar la red neuronal por defecto. <break time=\"0.8s\"/> Cierra los ojos. Respira con naturalidad. Y simplemente espera. <break time=\"1.0s\"/> Tarde o temprano, un pensamiento aparecerá. Puede ser un recuerdo, un plan, una preocupación, una imagen. <break time=\"0.5s\"/> Cuando llegue, no lo sigas. No desarrolles la historia. Solo obsérvalo como si fueras una espectadora en un cine. <break time=\"0.5s\"/> Ponle una etiqueta mental: recuerdo… plan… preocupación. <break time=\"0.5s\"/> Y déjalo ir. Espera al siguiente. <break time=\"1.0s\"/> Esto es exactamente lo que hacen los meditadores del estudio de Brewer. Observar sin engancharse. Tres minutos. Pruébalo.",
+      "duration_seconds": 40
+    },
+    {
+      "n": 8,
+      "type": "summary",
+      "title": "Lo que has aprendido hoy",
+      "bullets": [
+        "Tu cerebro cambia físicamente con la experiencia",
+        "La meditación fortalece la corteza prefrontal y reduce la amígdala",
+        "Puedes entrenar la capacidad de observar tus propios pensamientos"
+      ],
+      "narration": "Tres aprendizajes de hoy. <break time=\"0.5s\"/> Primero: tu cerebro no es fijo. Cambia con cada experiencia repetida, a cualquier edad. Los taxistas de Londres lo demostraron. <break time=\"0.5s\"/> Segundo: la meditación produce cambios anatómicos reales… más corteza prefrontal, menos amígdala. Puedes entrenar la calma. <break time=\"0.5s\"/> Y tercero: tu cerebro puede aprender a observarse a sí mismo. Esa capacidad de ver tus pensamientos sin engancharte es la base del autoconocimiento profundo.",
+      "duration_seconds": 28
+    },
+    {
+      "n": 9,
+      "type": "content",
+      "title": "Has completado el Módulo 1",
+      "bullets": [
+        "Siguiente: Quiz de 10 preguntas",
+        "Después: Módulo 2 — Tu mapa cósmico (carta natal)"
+      ],
+      "narration": "Felicidades. Has completado las tres lecciones del Módulo uno: Fundamentos de consciencia. <break time=\"0.5s\"/> Ahora sabes que la espiritualidad consciente tiene base científica, que el MBSR es el protocolo con más evidencia, y que tu cerebro cambia con lo que practicas. <break time=\"0.5s\"/> Tu siguiente paso es el quiz del módulo… diez preguntas para consolidar lo aprendido. Y después, nos vemos en el Módulo dos, donde vamos a hablar de tu mapa cósmico… tu carta natal. <break time=\"0.5s\"/> Y te prometo que también ahí habrá ciencia. Nos vemos.",
+      "duration_seconds": 28
+    }
+  ],
+
+  "quiz": [
+    {
+      "q": "¿Qué encontró Eleanor Maguire al estudiar a los taxistas de Londres?",
+      "opts": [
+        "Que su cerebro era más pequeño por el estrés",
+        "Que su hipocampo posterior era más grande",
+        "Que no había diferencias cerebrales",
+        "Que la conducción dañaba las neuronas"
+      ],
+      "answer": 1,
+      "why": "Maguire (2000) descubrió que el hipocampo posterior de los taxistas era significativamente mayor, proporcional a sus años de experiencia."
+    },
+    {
+      "q": "¿Qué es la red neuronal por defecto (default mode network)?",
+      "opts": [
+        "Una red que solo funciona al dormir",
+        "La red activa durante la introspección y la divagación mental",
+        "Un virus informático",
+        "La red que controla los músculos"
+      ],
+      "answer": 1,
+      "why": "La red neuronal por defecto se activa durante la introspección, los recuerdos y la planificación del futuro. Brewer (2011) demostró que los meditadores la regulan mejor."
+    },
+    {
+      "q": "¿En qué dirección funciona la neuroplasticidad?",
+      "opts": [
+        "Solo de crecimiento",
+        "Solo de pérdida",
+        "En ambas: lo que usas crece, lo que no usas se debilita",
+        "No funciona después de los 30 años"
+      ],
+      "answer": 2,
+      "why": "La neuroplasticidad funciona en ambas direcciones (use it or lose it) y a cualquier edad, como demostró Merzenich."
+    }
+  ],
+
+  "citations_used": [
+    "Maguire, E. A., Gadian, D. G., Johnsrude, I. S., et al. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403.",
+    "Maguire, E. A., Woollett, K., & Spiers, H. J. (2006). London taxi drivers and bus drivers: A structural MRI and neuropsychological analysis. Hippocampus, 16(12), 1091-1101.",
+    "Brewer, J. A., Worhunsky, P. D., Gray, J. R., et al. (2011). Meditation experience is associated with differences in default mode network activity and connectivity. PNAS, 108(50), 20254-20259.",
+    "Merzenich, M. M. (2013). Soft-Wired: How the New Science of Brain Plasticity Can Change Your Life. Parnassus Publishing."
+  ],
+
+  "meta": {
+    "total_narration_words": 755,
+    "estimated_duration_minutes": 10.8,
+    "slide_count": 9,
+    "citation_count": 4,
+    "banned_terms_found": 0
+  }
+}

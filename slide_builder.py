@@ -58,7 +58,18 @@ BG_MAP = {
 MOON_PATH = ASSETS_DIR / "decorations" / "moon_face.png"
 DIVIDER_PATH = ASSETS_DIR / "decorations" / "divider_star.png"
 CORNER_PATH = ASSETS_DIR / "decorations" / "corner_ornaments.png"
+CORNER_PATHS = {
+    "tl": ASSETS_DIR / "decorations" / "corner_tl.png",
+    "tr": ASSETS_DIR / "decorations" / "corner_tr.png",
+    "bl": ASSETS_DIR / "decorations" / "corner_bl.png",
+    "br": ASSETS_DIR / "decorations" / "corner_br.png",
+}
 CONSTELLATION_PATH = ASSETS_DIR / "decorations" / "constellation_overlay.png"
+
+# Layout constants — 10% padding on all edges
+PAD_H = Inches(1.333)   # 10% of 13.333"
+PAD_V = Inches(0.75)    # 10% of 7.5"
+CONTENT_W = Inches(10.667)  # 13.333 - 2*1.333
 
 
 def _set_slide_bg(slide, prs, slide_type="content"):
@@ -126,48 +137,76 @@ def _add_watermark(slide):
     )
 
 
+def _set_picture_opacity(pic, opacity_pct):
+    """Set opacity on a picture shape via XML (0-100)."""
+    from pptx.oxml.ns import qn
+    from lxml import etree
+    blipFill = pic._element.find(qn('p:blipFill'))
+    if blipFill is not None:
+        blip = blipFill.find(qn('a:blip'))
+        if blip is not None:
+            amt = int(opacity_pct * 1000)  # 40% = 40000
+            alphaModFix = etree.SubElement(blip, qn('a:alphaModFix'))
+            alphaModFix.set('amt', str(amt))
+
+
 def _add_corner_ornaments(slide, color=GOLD_DIM):
-    """Add corner ornaments: image asset if available, else text ✦."""
-    if CORNER_PATH.exists():
-        # Corner ornaments image is a single image with 4 corners.
-        # Place it as a full-slide overlay — the PNG has transparent center.
-        slide.shapes.add_picture(
-            str(CORNER_PATH), 0, 0,
-            Inches(13.333), Inches(7.5)
-        )
+    """Add 4 individual corner ornaments at 30% size, 40% opacity."""
+    # Corner size: ~1.4" x ~0.93" (30% of original ~4.6" x 3.1" visual)
+    cw = Inches(1.4)
+    ch = Inches(0.93)
+    margin = Inches(0.15)  # Small inset from edges
+    sw, sh = Inches(13.333), Inches(7.5)
+
+    positions = {
+        "tl": (margin, margin),
+        "tr": (sw - cw - margin, margin),
+        "bl": (margin, sh - ch - margin),
+        "br": (sw - cw - margin, sh - ch - margin),
+    }
+
+    has_images = all(p.exists() for p in CORNER_PATHS.values())
+    if has_images:
+        for key, (left, top) in positions.items():
+            pic = slide.shapes.add_picture(
+                str(CORNER_PATHS[key]), left, top, cw, ch
+            )
+            _set_picture_opacity(pic, 40)
     else:
-        positions = [
-            (Inches(0.3), Inches(0.2)),
-            (Inches(12.5), Inches(0.2)),
-            (Inches(0.3), Inches(6.9)),
-            (Inches(12.5), Inches(6.9)),
-        ]
-        for left, top in positions:
+        for left, top in positions.values():
             _add_text_box(
                 slide, left, top, Inches(0.5), Inches(0.4),
                 text="✦",
-                font_size=Pt(14), font_color=color,
+                font_size=Pt(10), font_color=color,
                 alignment=PP_ALIGN.CENTER
             )
 
 
 def _add_moon(slide):
-    """Add moon_face decoration on title slides."""
+    """Add moon_face decoration on title slides — small, centered, subtle."""
     if MOON_PATH.exists():
-        slide.shapes.add_picture(
-            str(MOON_PATH),
-            Inches(5.2), Inches(0.2),
-            Inches(3), Inches(3)
+        # ~150px wide ≈ 1.56". Moon is portrait (2:3), so height ≈ 2.34"
+        moon_w = Inches(1.56)
+        moon_h = Inches(2.34)
+        # Center horizontally, with breathing room from top
+        left = (Inches(13.333) - moon_w) / 2
+        top = Inches(0.8)
+        pic = slide.shapes.add_picture(
+            str(MOON_PATH), int(left), int(top), moon_w, moon_h
         )
+        _set_picture_opacity(pic, 60)  # Subtle, not protagonist
 
 
-def _add_divider(slide):
-    """Add star divider below title."""
+def _add_divider(slide, top=None):
+    """Add star divider — 40% slide width, centered."""
     if DIVIDER_PATH.exists():
+        div_w = Inches(5.333)  # 40% of 13.333"
+        div_h = Inches(0.35)
+        left = (Inches(13.333) - div_w) / 2
+        if top is None:
+            top = Inches(1.8)
         slide.shapes.add_picture(
-            str(DIVIDER_PATH),
-            Inches(3), Inches(1.8),
-            Inches(7.333), Inches(0.5)
+            str(DIVIDER_PATH), int(left), int(top), div_w, div_h
         )
 
 
@@ -224,7 +263,7 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         badge_text = f"{icon}  {slide_type.upper()}"
         _add_text_box(
             slide,
-            left=Inches(1.5), top=Inches(0.5),
+            left=PAD_H, top=PAD_V,
             width=Inches(3), height=Inches(0.35),
             text=badge_text,
             font_name=FONT_BODY, font_size=Pt(10),
@@ -234,7 +273,7 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
     # Slide counter (top-right)
     _add_text_box(
         slide,
-        left=Inches(11), top=Inches(0.5),
+        left=Inches(13.333) - PAD_H - Inches(1.5), top=PAD_V,
         width=Inches(1.5), height=Inches(0.35),
         text=f"{slide_number}/{total_slides}",
         font_name=FONT_BODY, font_size=Pt(10),
@@ -245,22 +284,24 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
     # Title — centered and larger for title/quote slides
     if slide_type == "title":
         _add_moon(slide)
+        # Title text is the protagonist — centered vertically in the slide
         _add_text_box(
             slide,
-            left=Inches(1.5), top=Inches(3.2),
-            width=Inches(10), height=Inches(1.5),
+            left=PAD_H, top=Inches(3.4),
+            width=CONTENT_W, height=Inches(1.5),
             text=title,
             font_name=FONT_DISPLAY, font_size=Pt(44),
             font_color=GOLD_LIGHT, bold=True,
             alignment=PP_ALIGN.CENTER
         )
-        _add_divider(slide)
+        # Divider sits right below title
+        _add_divider(slide, top=Inches(4.9))
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
             _add_text_box(
                 slide,
-                left=Inches(1.5), top=Inches(4.8),
-                width=Inches(10), height=Inches(0.5),
+                left=PAD_H, top=Inches(5.4),
+                width=CONTENT_W, height=Inches(0.5),
                 text=subtitle,
                 font_name=FONT_BODY, font_size=Pt(18),
                 font_color=DIM,
@@ -270,8 +311,8 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         # Large italic quote centered
         _add_text_box(
             slide,
-            left=Inches(1.5), top=Inches(1.5),
-            width=Inches(10), height=Inches(2.5),
+            left=PAD_H, top=Inches(2.0),
+            width=CONTENT_W, height=Inches(2.5),
             text=f"❝ {title}",
             font_name=FONT_DISPLAY, font_size=Pt(28),
             font_color=GOLD_LIGHT, bold=False,
@@ -279,29 +320,29 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         )
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
-            _add_divider(slide)
+            _add_divider(slide, top=Inches(4.5))
             _add_text_box(
                 slide,
-                left=Inches(1.5), top=Inches(4.5),
-                width=Inches(10), height=Inches(0.5),
+                left=PAD_H, top=Inches(5.0),
+                width=CONTENT_W, height=Inches(0.5),
                 text=f"— {subtitle}",
                 font_name=FONT_BODY, font_size=Pt(16),
                 font_color=DIM,
                 alignment=PP_ALIGN.CENTER
             )
     else:
-        # Standard title — inset from corner ornaments
+        # Standard title — inset with generous margins
         title_top = Inches(1.3)
         _add_text_box(
             slide,
-            left=Inches(1.5), top=title_top,
-            width=Inches(10), height=Inches(0.8),
+            left=PAD_H, top=title_top,
+            width=CONTENT_W, height=Inches(0.8),
             text=title,
             font_name=FONT_DISPLAY, font_size=Pt(32),
             font_color=GOLD_LIGHT, bold=True
         )
         # Separator line under title
-        _add_separator_line(slide, Inches(1.5), Inches(2.2), Inches(10), accent)
+        _add_separator_line(slide, PAD_H, Inches(2.2), CONTENT_W, accent)
 
     # Bullets (skip for title and quote slides)
     if slide_type not in ("title", "quote"):
@@ -310,8 +351,8 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
             bullet_text = f"  •  {bullet}"
             _add_text_box(
                 slide,
-                left=Inches(1.5), top=bullet_top + Inches(i * 0.55),
-                width=Inches(10), height=Inches(0.45),
+                left=PAD_H, top=bullet_top + Inches(i * 0.55),
+                width=CONTENT_W, height=Inches(0.45),
                 text=bullet_text,
                 font_name=FONT_BODY, font_size=Pt(20),
                 font_color=WHITE
@@ -319,11 +360,11 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
 
     # Citation (if present, at bottom — above corner ornaments)
     if citation:
-        _add_separator_line(slide, Inches(1.5), Inches(5.5), Inches(5), GOLD_DIM)
+        _add_separator_line(slide, PAD_H, Inches(5.5), Inches(5), GOLD_DIM)
         _add_text_box(
             slide,
-            left=Inches(1.5), top=Inches(5.6),
-            width=Inches(10), height=Inches(0.7),
+            left=PAD_H, top=Inches(5.6),
+            width=CONTENT_W, height=Inches(0.7),
             text=f"📚 {citation}",
             font_name=FONT_BODY, font_size=Pt(11),
             font_color=DIM

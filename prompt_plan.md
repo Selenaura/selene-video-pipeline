@@ -113,6 +113,14 @@ _Documenta aquí cualquier mejora, cambio de arquitectura o decisión técnica q
 - 2026-03-17: **Phase 7 — Ambient music auto-mix.** El video_assembler detecta automáticamente `ambient.mp3` (per-lesson o global en `assets/`), lo loopea si es más corto que el vídeo, y lo mezcla al 8% de volumen como música de fondo. Sin archivo, no hace nada.
 - 2026-03-17: **Phase 7 — Citas verificadas contra Google Scholar.** Kabat-Zinn 1982 (GHP 4:33-47), Maguire 2000 (PNAS 97:4398-4403) confirmados con datos exactos. Las citas de los golden examples son reales y de alta calidad.
 
+### Investigación open-source y mejoras (Phase 8)
+- 2026-03-17: **Investigación de herramientas open-source.** Evaluación comparativa de: MovieLite vs moviepy vs ffmpeg directo (video), pptxtoimages vs Pillow (rendering), Chatterbox vs Kokoro vs ElevenLabs (TTS). Fuentes: GitHub, PyPI, papers, benchmarks.
+- 2026-03-17: **ffmpeg directo reemplaza moviepy.** El video_assembler ahora usa ffmpeg subprocess para ensamblar segmentos: ~10x más rápido que moviepy (no carga frames en numpy). moviepy se mantiene como fallback si ffmpeg no está instalado. Concat demuxer + per-segment encoding → concat file → final MP4.
+- 2026-03-17: **pptxtoimages integrado como rendering premium.** LibreOffice→PDF→PNG vía pptxtoimages para slides pixel-perfect. Fallback automático a Pillow si LibreOffice falla o no está disponible. En este entorno LibreOffice no puede convertir PPTX con imágenes embebidas; el Pillow fallback funciona correctamente.
+- 2026-03-17: **Kokoro TTS (82M params, Apache) como alternativa gratuita.** `--tts kokoro` en pipeline.py activa Kokoro para narración española sin coste. 82M parámetros, corre en CPU, ~$0.06/h de audio. Ideal para desarrollo, pruebas, y producción low-cost. ElevenLabs sigue como default para calidad máxima.
+- 2026-03-17: **Assets visuales integrados en slide_builder y thumbnail.** Backgrounds por tipo de slide (bg_title, bg_content, bg_science, bg_practice, bg_quote, bg_summary), moon_face.png en title slides, divider_star.png como separador, corner_ornaments.png como overlay, constellation_overlay.png al 12% opacidad en content/science. Fallback a diseño procedural si assets no existen.
+- 2026-03-17: **Thumbnail mejorado con assets.** bg_title.png como fondo, moon_face.png redimensionado, divider_star.png, corner_ornaments.png — todo con fallback procedural.
+
 ---
 
 ## Nota sobre autonomía

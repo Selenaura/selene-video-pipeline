@@ -1,4 +1,8 @@
-"""Generate lesson thumbnails with Quantum Ethereal design."""
+"""Generate lesson thumbnails with Quantum Ethereal design.
+
+Uses moon_face.png and bg_title.png assets when available for premium look.
+Falls back to procedural Pillow drawing when assets are missing.
+"""
 
 import json
 from pathlib import Path
@@ -9,6 +13,13 @@ from validator import SETTINGS
 
 THUMB_SIZE = tuple(SETTINGS["video"]["thumbnail_size"])
 COLORS = SETTINGS["design"]["colors"]
+
+# Asset paths
+ASSETS_DIR = Path(__file__).parent / "assets"
+MOON_PATH = ASSETS_DIR / "decorations" / "moon_face.png"
+BG_TITLE_PATH = ASSETS_DIR / "backgrounds" / "bg_title.png"
+DIVIDER_PATH = ASSETS_DIR / "decorations" / "divider_star.png"
+CORNER_PATH = ASSETS_DIR / "decorations" / "corner_ornaments.png"
 
 
 def _hex_to_rgb(hex_str: str) -> tuple:
@@ -73,29 +84,49 @@ def generate_thumbnail(script: dict, output_path: str | Path) -> Path:
     output_path = Path(output_path)
     width, height = THUMB_SIZE
 
-    img = Image.new("RGB", (width, height), color=BG)
+    # Background: use bg_title.png asset if available
+    if BG_TITLE_PATH.exists():
+        bg_img = Image.open(BG_TITLE_PATH).convert("RGB")
+        img = bg_img.resize((width, height), Image.LANCZOS)
+    else:
+        img = Image.new("RGB", (width, height), color=BG)
+        draw_bg = ImageDraw.Draw(img)
+        # Procedural gold glow
+        glow_center = (width // 2, height // 2 - 20)
+        for r in range(180, 0, -2):
+            glow_color = (GOLD[0] // 6, GOLD[1] // 6, GOLD[2] // 8)
+            draw_bg.ellipse(
+                [glow_center[0] - r, glow_center[1] - r,
+                 glow_center[0] + r, glow_center[1] + r],
+                fill=glow_color
+            )
+
     draw = ImageDraw.Draw(img)
 
-    # Gold glow circle (center)
-    glow_center = (width // 2, height // 2 - 20)
-    for r in range(180, 0, -2):
-        alpha = int(25 * (r / 180))
-        glow_color = (GOLD[0] // 6, GOLD[1] // 6, GOLD[2] // 8)
-        draw.ellipse(
-            [glow_center[0] - r, glow_center[1] - r,
-             glow_center[0] + r, glow_center[1] + r],
-            fill=glow_color
-        )
+    # Corner ornaments: use asset or text fallback
+    if CORNER_PATH.exists():
+        corners = Image.open(CORNER_PATH).convert("RGBA")
+        corners = corners.resize((width, height), Image.LANCZOS)
+        img.paste(corners, (0, 0), corners)
+        draw = ImageDraw.Draw(img)  # Refresh draw after paste
+    else:
+        ornament_font = _load_font(20)
+        for px, py in [(30, 20), (width - 50, 20), (30, height - 40), (width - 50, height - 40)]:
+            draw.text((px, py), "✦", fill=GOLD_DIM, font=ornament_font)
 
-    # Corner ornaments ✦
-    ornament_font = _load_font(20)
-    positions = [(30, 20), (width - 50, 20), (30, height - 40), (width - 50, height - 40)]
-    for px, py in positions:
-        draw.text((px, py), "✦", fill=GOLD_DIM, font=ornament_font)
-
-    # Moon symbol ☽
-    moon_font = _load_font(60)
-    _draw_text_centered(draw, 100, "☽", moon_font, GOLD, width)
+    # Moon: use moon_face.png asset or text symbol
+    if MOON_PATH.exists():
+        moon = Image.open(MOON_PATH).convert("RGBA")
+        moon_w = 160
+        moon_h = int(moon.height * (moon_w / moon.width))
+        moon = moon.resize((moon_w, moon_h), Image.LANCZOS)
+        moon_x = (width - moon_w) // 2
+        moon_y = 30
+        img.paste(moon, (moon_x, moon_y), moon)
+        draw = ImageDraw.Draw(img)
+    else:
+        moon_font = _load_font(60)
+        _draw_text_centered(draw, 100, "☽", moon_font, GOLD, width)
 
     # Module tag
     module = script.get("module", 1)
@@ -104,31 +135,40 @@ def generate_thumbnail(script: dict, output_path: str | Path) -> Path:
     tag_text = f"MÓDULO {module}"
     if module_name:
         tag_text += f" · {module_name}"
-    _draw_text_centered(draw, 200, tag_text, tag_font, GOLD_DIM, width)
+    _draw_text_centered(draw, 220, tag_text, tag_font, GOLD_DIM, width)
 
     # Lesson title (centered, wrapped)
     title = script.get("title", "Lección")
     title_font = _load_font(44)
-    _draw_text_wrapped(draw, 80, 260, title, title_font, GOLD_LIGHT, width - 160)
+    _draw_text_wrapped(draw, 80, 280, title, title_font, GOLD_LIGHT, width - 160)
 
-    # Gold separator line
-    line_y = 450
-    line_w = 300
-    draw.rectangle(
-        [(width // 2 - line_w // 2, line_y),
-         (width // 2 + line_w // 2, line_y + 2)],
-        fill=GOLD_DIM
-    )
+    # Divider: use asset or line
+    if DIVIDER_PATH.exists():
+        divider = Image.open(DIVIDER_PATH).convert("RGBA")
+        div_w = 500
+        div_h = int(divider.height * (div_w / divider.width))
+        divider = divider.resize((div_w, div_h), Image.LANCZOS)
+        div_x = (width - div_w) // 2
+        img.paste(divider, (div_x, 440), divider)
+        draw = ImageDraw.Draw(img)
+    else:
+        line_y = 450
+        line_w = 300
+        draw.rectangle(
+            [(width // 2 - line_w // 2, line_y),
+             (width // 2 + line_w // 2, line_y + 2)],
+            fill=GOLD_DIM
+        )
 
     # Brand watermark
     brand_font = _load_font(24)
-    _draw_text_centered(draw, 480, "SELENE ACADEMIA", brand_font, DIM, width)
+    _draw_text_centered(draw, 500, "SELENE ACADEMIA", brand_font, DIM, width)
 
     # Course name
     course = script.get("course", "")
     if course:
         course_font = _load_font(16)
-        _draw_text_centered(draw, 520, course, course_font, GOLD_DIM, width)
+        _draw_text_centered(draw, 540, course, course_font, GOLD_DIM, width)
 
     # Bottom border line
     draw.rectangle([(0, height - 4), (width, height)], fill=GOLD_DIM)

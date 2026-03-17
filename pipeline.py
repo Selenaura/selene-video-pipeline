@@ -44,7 +44,8 @@ def run_step_script(lesson_index: int, course_id: str, output_dir: str,
 
 
 def run_pipeline(lesson_index: int, course_id: str, steps: list[str],
-                 output_dir: str, dry_run: bool = False) -> None:
+                 output_dir: str, dry_run: bool = False,
+                 tts_engine: str = "elevenlabs") -> None:
     """Run pipeline steps for a single lesson."""
     course = load_course(course_id)
     lesson = course["lessons"][lesson_index]
@@ -72,7 +73,7 @@ def run_pipeline(lesson_index: int, course_id: str, steps: list[str],
         lesson_dir = Path(output_dir) / f"lesson_{lesson_index:02d}"
         script_file = lesson_dir / "script.json"
         if script_file.exists():
-            narrate_lesson(script_file, dry_run=dry_run)
+            narrate_lesson(script_file, dry_run=dry_run, tts_engine=tts_engine)
         else:
             print(f"  ⚠ No script.json found — run 'script' step first")
 
@@ -101,7 +102,7 @@ def run_pipeline(lesson_index: int, course_id: str, steps: list[str],
 
 
 def run_course(course_id: str, steps: list[str], output_dir: str,
-               dry_run: bool = False) -> None:
+               dry_run: bool = False, tts_engine: str = "elevenlabs") -> None:
     """Run pipeline for all lessons in a course."""
     course = load_course(course_id)
     lessons = course["lessons"]
@@ -129,7 +130,8 @@ def run_course(course_id: str, steps: list[str], output_dir: str,
                 continue
 
         try:
-            run_pipeline(i, course_id, steps, output_dir, dry_run=dry_run)
+            run_pipeline(i, course_id, steps, output_dir, dry_run=dry_run,
+                        tts_engine=tts_engine)
             completed += 1
         except Exception as e:
             print(f"  ❌ [{i}] Failed: {e}")
@@ -159,6 +161,9 @@ def main():
                         help="Output directory (default: output)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Test mode: use sample scripts instead of API calls")
+    parser.add_argument("--tts", type=str, default="elevenlabs",
+                        choices=["elevenlabs", "kokoro"],
+                        help="TTS engine: elevenlabs (default, paid) or kokoro (free, local)")
     parser.add_argument("--validate", type=str, metavar="PATH",
                         help="Validate an existing script.json file")
 
@@ -183,11 +188,13 @@ def main():
 
     if args.lesson is not None:
         course_id = args.course or "brujula-interior"
-        run_pipeline(args.lesson, course_id, steps, args.output, dry_run=args.dry_run)
+        run_pipeline(args.lesson, course_id, steps, args.output,
+                     dry_run=args.dry_run, tts_engine=args.tts)
         return
 
     if args.course:
-        run_course(args.course, steps, args.output, dry_run=args.dry_run)
+        run_course(args.course, steps, args.output, dry_run=args.dry_run,
+                   tts_engine=args.tts)
         return
 
     parser.print_help()

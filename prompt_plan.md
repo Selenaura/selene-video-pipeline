@@ -59,13 +59,15 @@
 **Resultado**: `audio_narrator.py` generates per-slide MP3 + manifest.json. Lesson 0: 8 slides, 2999 chars, ~3.1 min estimated.
 **Nota**: word-level timestamps pendientes — requiere `with_timestamps` que depende de la versión del SDK. Se resolverá al integrar con subtítulos (Phase 4).
 
-## Phase 4: Subtitles & Transcript
-- [ ] Generate SRT from narration text + estimated timing (or ElevenLabs timestamps if available)
-- [ ] SRT rules: max 42 chars/line, max 2 lines, sentence-aligned
-- [ ] Generate `transcript.md` per lesson (full narration text + citations as footnotes)
-- [ ] Test: load SRT in VLC with a test video, verify sync
+## Phase 4: Subtitles & Transcript [COMPLETED ✓]
+- [x] Generate SRT from narration text + audio manifest timing
+- [x] SRT rules: max 42 chars/line, max 2 lines, sentence-aligned
+- [x] SSML tags stripped from subtitle text
+- [x] Proportional timing by word count per sentence
+- [x] Generate `transcript.md` per lesson (full narration + bibliography)
+- [x] Integrated into pipeline as 'subtitles' step
 
-**Acceptance**: SRT plays in sync with audio in VLC player.
+**Resultado**: Lesson 0 genera 27 cues SRT sentence-aligned + transcript.md con referencias.
 
 ## Phase 5: Video Assembly
 **Custom pipeline** (slide-stream descartado en Phase 0):

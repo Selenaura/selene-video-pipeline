@@ -31,6 +31,9 @@ VIOLET = RGBColor.from_string(COLORS["violet"])
 TEAL = RGBColor.from_string(COLORS["teal"])
 ROSE = RGBColor.from_string(COLORS["rose"])
 
+BODY_WHITE = RGBColor(0xF0, 0xED, 0xE4)  # Warm white for max legibility
+CITATION_GRAY = RGBColor(0xA8, 0xA4, 0xA0)  # Visible but secondary
+
 ACCENT_COLORS = {
     "gold": GOLD,
     "blue": BLUE,
@@ -151,7 +154,7 @@ def _set_picture_opacity(pic, opacity_pct):
 
 
 def _add_corner_ornaments(slide, color=GOLD_DIM):
-    """Add 4 individual corner ornaments at 30% size, 40% opacity."""
+    """Add 4 individual corner ornaments at 30% size, ~22% opacity (watermark-level)."""
     # Corner size: ~1.4" x ~0.93" (30% of original ~4.6" x 3.1" visual)
     cw = Inches(1.4)
     ch = Inches(0.93)
@@ -171,7 +174,7 @@ def _add_corner_ornaments(slide, color=GOLD_DIM):
             pic = slide.shapes.add_picture(
                 str(CORNER_PATHS[key]), left, top, cw, ch
             )
-            _set_picture_opacity(pic, 40)
+            _set_picture_opacity(pic, 22)
     else:
         for left, top in positions.values():
             _add_text_box(
@@ -220,6 +223,29 @@ def _add_constellation(slide):
             str(CONSTELLATION_PATH), 0, 0,
             Inches(13.333), Inches(7.5)
         )
+
+
+def _add_bullet(slide, left, top, width, text, accent_color=GOLD):
+    """Add a bullet with gold dot and white body text for max contrast."""
+    txBox = slide.shapes.add_textbox(left, top, width, Inches(0.6))
+    tf = txBox.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    # Gold bullet dot
+    dot_run = p.add_run()
+    dot_run.text = "  •   "
+    dot_run.font.name = FONT_BODY
+    dot_run.font.size = Pt(28)
+    dot_run.font.color.rgb = accent_color
+    dot_run.font.bold = True
+    # White body text
+    text_run = p.add_run()
+    text_run.text = text
+    text_run.font.name = FONT_BODY
+    text_run.font.size = Pt(28)
+    text_run.font.color.rgb = BODY_WHITE
+    text_run.font.bold = False
+    return txBox
 
 
 def _get_accent_color(slide_type: str) -> RGBColor:
@@ -290,7 +316,7 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
             left=PAD_H, top=Inches(3.4),
             width=CONTENT_W, height=Inches(1.5),
             text=title,
-            font_name=FONT_DISPLAY, font_size=Pt(44),
+            font_name=FONT_DISPLAY, font_size=Pt(48),
             font_color=GOLD_LIGHT, bold=True,
             alignment=PP_ALIGN.CENTER
         )
@@ -301,21 +327,21 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
             _add_text_box(
                 slide,
                 left=PAD_H, top=Inches(5.4),
-                width=CONTENT_W, height=Inches(0.5),
+                width=CONTENT_W, height=Inches(0.6),
                 text=subtitle,
-                font_name=FONT_BODY, font_size=Pt(18),
-                font_color=DIM,
+                font_name=FONT_BODY, font_size=Pt(22),
+                font_color=BODY_WHITE,
                 alignment=PP_ALIGN.CENTER
             )
     elif slide_type == "quote":
-        # Large italic quote centered
+        # Large quote centered
         _add_text_box(
             slide,
             left=PAD_H, top=Inches(2.0),
             width=CONTENT_W, height=Inches(2.5),
             text=f"❝ {title}",
-            font_name=FONT_DISPLAY, font_size=Pt(28),
-            font_color=GOLD_LIGHT, bold=False,
+            font_name=FONT_DISPLAY, font_size=Pt(32),
+            font_color=BODY_WHITE, bold=False,
             alignment=PP_ALIGN.CENTER
         )
         subtitle = slide_data.get("subtitle", "")
@@ -326,48 +352,40 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
                 left=PAD_H, top=Inches(5.0),
                 width=CONTENT_W, height=Inches(0.5),
                 text=f"— {subtitle}",
-                font_name=FONT_BODY, font_size=Pt(16),
-                font_color=DIM,
+                font_name=FONT_BODY, font_size=Pt(20),
+                font_color=CITATION_GRAY,
                 alignment=PP_ALIGN.CENTER
             )
     else:
         # Standard title — inset with generous margins
-        title_top = Inches(1.3)
+        title_top = Inches(1.2)
         _add_text_box(
             slide,
             left=PAD_H, top=title_top,
-            width=CONTENT_W, height=Inches(0.8),
+            width=CONTENT_W, height=Inches(1.0),
             text=title,
-            font_name=FONT_DISPLAY, font_size=Pt(32),
+            font_name=FONT_DISPLAY, font_size=Pt(36),
             font_color=GOLD_LIGHT, bold=True
         )
         # Separator line under title
-        _add_separator_line(slide, PAD_H, Inches(2.2), CONTENT_W, accent)
+        _add_separator_line(slide, PAD_H, Inches(2.3), CONTENT_W, accent)
 
     # Bullets (skip for title and quote slides)
     if slide_type not in ("title", "quote"):
-        bullet_top = Inches(2.5)
+        bullet_top = Inches(2.6)
         for i, bullet in enumerate(bullets):
-            bullet_text = f"  •  {bullet}"
-            _add_text_box(
-                slide,
-                left=PAD_H, top=bullet_top + Inches(i * 0.55),
-                width=CONTENT_W, height=Inches(0.45),
-                text=bullet_text,
-                font_name=FONT_BODY, font_size=Pt(20),
-                font_color=WHITE
-            )
+            _add_bullet(slide, PAD_H, bullet_top + Inches(i * 0.72),
+                        CONTENT_W, bullet, accent)
 
-    # Citation (if present, at bottom — above corner ornaments)
+    # Citation (if present — structured format, clearly readable)
     if citation:
-        _add_separator_line(slide, PAD_H, Inches(5.5), Inches(5), GOLD_DIM)
         _add_text_box(
             slide,
-            left=PAD_H, top=Inches(5.6),
+            left=PAD_H, top=Inches(5.8),
             width=CONTENT_W, height=Inches(0.7),
-            text=f"📚 {citation}",
-            font_name=FONT_BODY, font_size=Pt(11),
-            font_color=DIM
+            text=f"📚  {citation}",
+            font_name=FONT_BODY, font_size=Pt(18),
+            font_color=CITATION_GRAY
         )
 
     # Speaker notes = narration text

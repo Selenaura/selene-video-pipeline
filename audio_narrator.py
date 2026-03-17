@@ -31,6 +31,15 @@ def get_voice_id() -> str:
     return VOICES["recommended"][0]["id"]
 
 
+def get_fallback_voice_id() -> str:
+    """Get a free-tier premade voice ID as fallback."""
+    fallback = VOICES.get("free_tier_fallback", [])
+    if fallback:
+        return fallback[0]["id"]
+    # Hardcoded Rachel as last resort
+    return "21m00Tcm4TlvDq8ikWAM"
+
+
 def prepare_narration_text(slides: list[dict]) -> list[dict]:
     """Prepare narration text with SSML pauses for each slide."""
     prepared = []
@@ -80,22 +89,38 @@ def synthesize_audio(text: str, output_path: str, voice_id: str = None,
     client = ElevenLabs(api_key=os.environ.get("ELEVENLABS_API_KEY"))
     voice_id = voice_id or get_voice_id()
 
-    audio_generator = client.text_to_speech.convert(
-        text=text,
-        voice_id=voice_id,
-        model_id=API_CONFIG["elevenlabs_model"],
-        voice_settings=VoiceSettings(
-            stability=API_CONFIG["elevenlabs_stability"],
-            similarity_boost=API_CONFIG["elevenlabs_similarity"],
-            style=API_CONFIG["elevenlabs_style"],
-            use_speaker_boost=API_CONFIG["elevenlabs_use_speaker_boost"],
-        ),
-        language_code=API_CONFIG["elevenlabs_language_code"],
-        output_format=SETTINGS["video"]["audio_format"],
-    )
+    def _call_tts(vid: str):
+        return client.text_to_speech.convert(
+            text=text,
+            voice_id=vid,
+            model_id=API_CONFIG["elevenlabs_model"],
+            voice_settings=VoiceSettings(
+                stability=API_CONFIG["elevenlabs_stability"],
+                similarity_boost=API_CONFIG["elevenlabs_similarity"],
+                style=API_CONFIG["elevenlabs_style"],
+                use_speaker_boost=API_CONFIG["elevenlabs_use_speaker_boost"],
+            ),
+            language_code=API_CONFIG["elevenlabs_language_code"],
+            output_format=SETTINGS["video"]["audio_format"],
+        )
 
-    # Write audio bytes to file
-    audio_bytes = b"".join(audio_generator)
+    try:
+        audio_generator = _call_tts(voice_id)
+        audio_bytes = b"".join(audio_generator)
+    except Exception as e:
+        err_msg = str(e)
+        if "402" in err_msg or "payment_required" in err_msg or "paid_plan_required" in err_msg:
+            fallback_id = get_fallback_voice_id()
+            fallback_name = next(
+                (v["name"] for v in VOICES.get("free_tier_fallback", []) if v["id"] == fallback_id),
+                "premade"
+            )
+            print(f"  ⚠️  Library voice requires paid plan. Falling back to '{fallback_name}' (premade, free tier).")
+            print(f"     Tip: upgrade to Starter ($5/mo) for native Spanish voices, or use --tts kokoro (free).")
+            audio_generator = _call_tts(fallback_id)
+            audio_bytes = b"".join(audio_generator)
+        else:
+            raise
     with open(output_path, "wb") as f:
         f.write(audio_bytes)
 

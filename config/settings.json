@@ -24,28 +24,48 @@
   },
 
   "voices": {
-    "_selection_guide": "Paso 1: Probar las recomendadas en español. Paso 2: Si ninguna convence, crear una voz custom con Voice Design. Paso 3: Para máxima calidad, hacer Instant Voice Clone con 3+ muestras de audio limpio.",
+    "_selection_guide": "Paso 1: Probar las recomendadas en español (requiere plan Starter+). Si estás en free tier, usar las premade (ver free_tier_fallback). Paso 2: Si ninguna convence, crear una voz custom con Voice Design. Paso 3: Para máxima calidad, hacer Instant Voice Clone con 3+ muestras de audio limpio.",
     "recommended": [
       {
         "name": "Lourdes",
         "id": "SbxCN6LQhBInYaeKjhhW",
         "desc": "Española nativa, cálida y natural — Ideal para narración educativa",
         "use_for": "Lecciones estándar (contenido, ciencia, resúmenes)",
-        "origin": "España (andaluza)"
+        "origin": "España (andaluza)",
+        "tier": "starter+"
       },
       {
         "name": "Cristina",
         "id": "2VUqK4PEdMj16L6xTN4J",
         "desc": "Española nativa, 35 años, tono cálido y natural — Buena para educación",
         "use_for": "Alternativa principal si Lourdes suena demasiado suave",
-        "origin": "España (andaluza)"
+        "origin": "España (andaluza)",
+        "tier": "starter+"
       },
       {
         "name": "Afrodita",
         "id": "6Pd8chnUWvPJasJAi15C",
         "desc": "Española peninsular, suave, narrativa — Ideal para prácticas y meditación",
         "use_for": "Meditaciones guiadas, prácticas, body scan",
-        "origin": "España (Canarias/peninsular)"
+        "origin": "España (Canarias/peninsular)",
+        "tier": "starter+"
+      }
+    ],
+    "_free_tier_note": "Las voces de la library requieren plan Starter+ ($5/mes). En free tier, usar estas voces premade con eleven_multilingual_v2 — hablan español pero con posible acento inglés leve. Para 100% nativo sin coste, usar --tts kokoro.",
+    "free_tier_fallback": [
+      {
+        "name": "Rachel",
+        "id": "21m00Tcm4TlvDq8ikWAM",
+        "desc": "Premade, voz calmada narrativa — La mejor premade para educación en español",
+        "use_for": "Fallback general para free tier",
+        "tier": "free"
+      },
+      {
+        "name": "Bella",
+        "id": "EXAVITQu4vr4xnSDxMaL",
+        "desc": "Premade, voz suave y cercana — Alternativa más íntima",
+        "use_for": "Fallback si Rachel suena demasiado seria",
+        "tier": "free"
       }
     ],
     "custom_voice_design": {

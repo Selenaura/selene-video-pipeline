@@ -104,23 +104,53 @@ def synthesize_audio(text: str, output_path: str, voice_id: str = None,
             output_format=SETTINGS["video"]["audio_format"],
         )
 
+    def _is_payment_error(exc: Exception) -> bool:
+        err_msg = str(exc)
+        return "402" in err_msg or "payment_required" in err_msg or "paid_plan_required" in err_msg
+
     try:
         audio_generator = _call_tts(voice_id)
         audio_bytes = b"".join(audio_generator)
     except Exception as e:
-        err_msg = str(e)
-        if "402" in err_msg or "payment_required" in err_msg or "paid_plan_required" in err_msg:
-            fallback_id = get_fallback_voice_id()
+        if not _is_payment_error(e):
+            raise
+        # Try premade fallback voice
+        fallback_id = get_fallback_voice_id()
+        if fallback_id != voice_id:
             fallback_name = next(
                 (v["name"] for v in VOICES.get("free_tier_fallback", []) if v["id"] == fallback_id),
                 "premade"
             )
-            print(f"  ⚠️  Library voice requires paid plan. Falling back to '{fallback_name}' (premade, free tier).")
-            print(f"     Tip: upgrade to Starter ($5/mo) for native Spanish voices, or use --tts kokoro (free).")
-            audio_generator = _call_tts(fallback_id)
-            audio_bytes = b"".join(audio_generator)
+            print(f"  ⚠️  Library voice requires paid plan. Trying '{fallback_name}' (premade)...")
+            try:
+                audio_generator = _call_tts(fallback_id)
+                audio_bytes = b"".join(audio_generator)
+            except Exception as e2:
+                if not _is_payment_error(e2):
+                    raise
+                # Premade voice also rejected — fall back to silent placeholder
+                print(f"  ⚠️  ElevenLabs free tier rejected all voices. Generating silent placeholder.")
+                print(f"     Options: upgrade to Starter ($5/mo), use --tts kokoro (free), or --dry-run.")
+                _create_silent_mp3(output_path)
+                word_count = len(text.split())
+                return {
+                    "path": output_path,
+                    "duration_seconds": word_count / (SETTINGS["video"]["words_per_minute"] / 60),
+                    "char_count": len(text),
+                    "cost_estimate": 0,
+                }
         else:
-            raise
+            # Already using fallback voice — silent placeholder
+            print(f"  ⚠️  ElevenLabs free tier rejected voice. Generating silent placeholder.")
+            print(f"     Options: upgrade to Starter ($5/mo), use --tts kokoro (free), or --dry-run.")
+            _create_silent_mp3(output_path)
+            word_count = len(text.split())
+            return {
+                "path": output_path,
+                "duration_seconds": word_count / (SETTINGS["video"]["words_per_minute"] / 60),
+                "char_count": len(text),
+                "cost_estimate": 0,
+            }
     with open(output_path, "wb") as f:
         f.write(audio_bytes)
 

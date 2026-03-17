@@ -157,6 +157,29 @@ def assemble_video(lesson_dir: str | Path, dry_run: bool = False) -> Path:
     print(f"  🎬 Assembling {len(clips)} clips...")
     final = concatenate_videoclips(clips, method="compose")
 
+    # Step 3b: Mix ambient music if available
+    music_path = lesson_dir / "ambient.mp3"
+    if not music_path.exists():
+        music_path = Path("assets") / "ambient.mp3"
+    if music_path.exists() and not dry_run:
+        try:
+            music = AudioFileClip(str(music_path))
+            if music.duration < final.duration:
+                # Loop music to match video length
+                loops_needed = int(final.duration / music.duration) + 1
+                from moviepy import concatenate_audioclips
+                music = concatenate_audioclips([music] * loops_needed)
+            music = music.subclipped(0, final.duration)
+            music = music.with_volume_scaled(0.08)  # ~8% volume for background
+            if final.audio is not None:
+                from moviepy import CompositeAudioClip
+                final = final.with_audio(CompositeAudioClip([final.audio, music]))
+            else:
+                final = final.with_audio(music)
+            print(f"  🎵 Ambient music mixed at 8% volume")
+        except Exception as e:
+            print(f"  ⚠ Could not mix ambient music: {e}")
+
     # Step 4: Write output
     output_path = lesson_dir / "lesson.mp4"
     final.write_videofile(

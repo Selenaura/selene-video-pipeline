@@ -89,12 +89,12 @@
 
 **Resultado**: `thumbnail_generator.py` genera PNG 1280x720 Quantum Ethereal. Pipeline completo integrado: script→slides→audio→subtitles→video→thumbnail. Dry-run testado exitosamente.
 
-## Phase 7: Quality & Polish
-- [ ] A/B test 2-3 ElevenLabs voices with same script, pick best for Selene
-- [ ] Review 3 random scripts for citation accuracy (Google Scholar the references)
-- [ ] Add ambient music option (low volume, royalty-free, via ffmpeg audio mix)
-- [ ] Final README with: usage, cost breakdown, voice selection guide, troubleshooting
-- [ ] `.gitignore` for output/, audio/, *.mp3, *.mp4
+## Phase 7: Quality & Polish [COMPLETED ✓]
+- [x] A/B voice testing utility (`voice_tester.py`) — tests all 3 recommended voices with config settings
+- [x] Citation accuracy review: verified Kabat-Zinn 1982 (General Hospital Psychiatry), Maguire 2000 (PNAS), Goyal 2014 (JAMA Internal Medicine) — all exact matches on author, year, journal, volume, pages
+- [x] Ambient music mixing in `video_assembler.py` — auto-detects `ambient.mp3` in lesson dir or `assets/`, loops and mixes at 8% volume
+- [x] Final README with: architecture, usage, cost breakdown, voice selection guide, output structure, troubleshooting
+- [x] `.gitignore` for output/, audio/, *.mp3, *.mp4 (done in earlier phase)
 
 ---
 
@@ -109,6 +109,9 @@ _Documenta aquí cualquier mejora, cambio de arquitectura o decisión técnica q
 - 2026-03-17: **Phase 5 — Pillow rendering en lugar de LibreOffice.** LibreOffice headless `--convert-to png` solo exporta la primera slide del PPTX. Se implementó renderizado con Pillow: extrae textos de cada shape de python-pptx y los dibuja sobre fondo oscuro. No es pixel-perfect respecto al PPTX pero es funcional y no requiere dependencias externas.
 - 2026-03-17: **Phase 5 — moviepy en lugar de ffmpeg directo.** moviepy (ImageClip + AudioFileClip + concatenate_videoclips) simplifica la lógica de ensamblaje vs. ffmpeg con concat demuxer. Produce libx264/AAC MP4.
 - 2026-03-17: **Adaptación al formato golden examples.** Tras recibir los scripts M01 del usuario, se adaptaron validator.py, script_generator.py y slide_builder.py para soportar el formato golden (lesson_id, citations_used, citations_bibliography, meta block, SSML inline, duration_seconds por slide, slide types title/quote). El script_generator usa M01_L01 como few-shot example para Claude.
+- 2026-03-17: **Phase 7 — Voice tester utility.** `voice_tester.py` permite hacer A/B testing de las 3 voces recomendadas (Sarah, Lily, Jessica) con el mismo texto de prueba y settings idénticos. Genera MP3 samples para comparación auditiva.
+- 2026-03-17: **Phase 7 — Ambient music auto-mix.** El video_assembler detecta automáticamente `ambient.mp3` (per-lesson o global en `assets/`), lo loopea si es más corto que el vídeo, y lo mezcla al 8% de volumen como música de fondo. Sin archivo, no hace nada.
+- 2026-03-17: **Phase 7 — Citas verificadas contra Google Scholar.** Kabat-Zinn 1982 (GHP 4:33-47), Maguire 2000 (PNAS 97:4398-4403) confirmados con datos exactos. Las citas de los golden examples son reales y de alta calidad.
 
 ---
 

@@ -128,16 +128,25 @@ def _add_separator_line(slide, left, top, width, color=GOLD_DIM):
 
 
 def _add_watermark(slide):
-    """Add 'SELENE ACADEMIA' watermark at bottom."""
-    _add_text_box(
-        slide,
-        left=Inches(0.5), top=Inches(6.8),
-        width=Inches(12), height=Inches(0.4),
-        text="SELENE ACADEMIA",
-        font_name=FONT_BODY, font_size=Pt(9),
-        font_color=RGBColor(0x40, 0x40, 0x45),
-        alignment=PP_ALIGN.CENTER
+    """Add 'SELENE ACADEMIA' watermark at bottom — 12pt gold dim, wide spacing."""
+    from pptx.oxml.ns import qn
+
+    txBox = slide.shapes.add_textbox(
+        Inches(0.5), Inches(6.85), Inches(12.333), Inches(0.4)
     )
+    tf = txBox.text_frame
+    tf.word_wrap = False
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+
+    run = p.add_run()
+    run.text = "S E L E N E   A C A D E M I A"
+    run.font.name = FONT_BODY
+    run.font.size = Pt(12)
+    run.font.color.rgb = RGBColor(0x8B, 0x76, 0x35)  # Gold dim
+    # Letter spacing via XML (300 = 3pt spacing)
+    rPr = run._r.get_or_add_rPr()
+    rPr.set(qn('a:spc'), '300')
 
 
 def _set_picture_opacity(pic, opacity_pct):
@@ -154,27 +163,25 @@ def _set_picture_opacity(pic, opacity_pct):
 
 
 def _add_corner_ornaments(slide, color=GOLD_DIM):
-    """Add 4 individual corner ornaments at 30% size, ~22% opacity (watermark-level)."""
-    # Corner size: ~1.4" x ~0.93" (30% of original ~4.6" x 3.1" visual)
+    """Add top-2 corner ornaments only, ~18% opacity (barely-visible watermark)."""
     cw = Inches(1.4)
     ch = Inches(0.93)
-    margin = Inches(0.15)  # Small inset from edges
-    sw, sh = Inches(13.333), Inches(7.5)
+    margin = Inches(0.15)
+    sw = Inches(13.333)
 
+    # Top corners only — bottom corners removed to avoid competing with content
     positions = {
         "tl": (margin, margin),
         "tr": (sw - cw - margin, margin),
-        "bl": (margin, sh - ch - margin),
-        "br": (sw - cw - margin, sh - ch - margin),
     }
 
-    has_images = all(p.exists() for p in CORNER_PATHS.values())
+    has_images = all(CORNER_PATHS[k].exists() for k in positions)
     if has_images:
         for key, (left, top) in positions.items():
             pic = slide.shapes.add_picture(
                 str(CORNER_PATHS[key]), left, top, cw, ch
             )
-            _set_picture_opacity(pic, 22)
+            _set_picture_opacity(pic, 18)
     else:
         for left, top in positions.values():
             _add_text_box(
@@ -226,25 +233,64 @@ def _add_constellation(slide):
 
 
 def _add_bullet(slide, left, top, width, text, accent_color=GOLD):
-    """Add a bullet with gold dot and white body text for max contrast."""
-    txBox = slide.shapes.add_textbox(left, top, width, Inches(0.6))
+    """Add a bullet with gold diamond and white body text for max contrast."""
+    from pptx.util import Pt
+    from pptx.oxml.ns import qn
+
+    txBox = slide.shapes.add_textbox(left, top, width, Inches(0.75))
     tf = txBox.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    # Gold bullet dot
+
+    # Set line spacing to 1.8
+    pPr = p._pPr
+    if pPr is None:
+        pPr = p._p.get_or_add_pPr()
+    lnSpc = pPr.makeelement(qn('a:lnSpc'), {})
+    spcPct = lnSpc.makeelement(qn('a:spcPct'), {'val': '180000'})
+    lnSpc.append(spcPct)
+    pPr.append(lnSpc)
+
+    # Gold diamond marker
     dot_run = p.add_run()
-    dot_run.text = "  •   "
+    dot_run.text = "◆  "
     dot_run.font.name = FONT_BODY
-    dot_run.font.size = Pt(28)
+    dot_run.font.size = Pt(20)
     dot_run.font.color.rgb = accent_color
-    dot_run.font.bold = True
-    # White body text
+    dot_run.font.bold = False
+    # White body text at 32pt
     text_run = p.add_run()
     text_run.text = text
     text_run.font.name = FONT_BODY
-    text_run.font.size = Pt(28)
+    text_run.font.size = Pt(32)
     text_run.font.color.rgb = BODY_WHITE
     text_run.font.bold = False
+    return txBox
+
+
+def _add_citation(slide, left, top, width, citation_text):
+    """Add a structured citation block — 20pt, italic, gray."""
+    txBox = slide.shapes.add_textbox(left, top, width, Inches(0.7))
+    tf = txBox.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+
+    # Emoji prefix
+    icon_run = p.add_run()
+    icon_run.text = "📚  "
+    icon_run.font.name = FONT_BODY
+    icon_run.font.size = Pt(20)
+    icon_run.font.color.rgb = CITATION_GRAY
+
+    # Citation text — italic
+    text_run = p.add_run()
+    text_run.text = citation_text
+    text_run.font.name = FONT_BODY
+    text_run.font.size = Pt(20)
+    text_run.font.color.rgb = CITATION_GRAY
+    text_run.font.italic = True
+
     return txBox
 
 
@@ -277,11 +323,6 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
     slide = prs.slides.add_slide(blank_layout)
     _set_slide_bg(slide, prs, slide_type)
     _add_corner_ornaments(slide, GOLD_DIM)
-
-    # Add constellation overlay on content/science slides
-    if slide_type in ("content", "science"):
-        _add_constellation(slide)
-
     _add_watermark(slide)
 
     # Slide type badge (top-left area) — skip for title slides
@@ -357,36 +398,33 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
                 alignment=PP_ALIGN.CENTER
             )
     else:
-        # Standard title — inset with generous margins
-        title_top = Inches(1.2)
+        # Standard title — white, bold, 52pt for mobile legibility
         _add_text_box(
             slide,
-            left=PAD_H, top=title_top,
+            left=PAD_H, top=PAD_V,
             width=CONTENT_W, height=Inches(1.0),
             text=title,
-            font_name=FONT_DISPLAY, font_size=Pt(36),
-            font_color=GOLD_LIGHT, bold=True
+            font_name=FONT_DISPLAY, font_size=Pt(52),
+            font_color=BODY_WHITE, bold=True
         )
         # Separator line under title
-        _add_separator_line(slide, PAD_H, Inches(2.3), CONTENT_W, accent)
+        _add_separator_line(slide, PAD_H, Inches(1.8), CONTENT_W, accent)
 
     # Bullets (skip for title and quote slides)
     if slide_type not in ("title", "quote"):
-        bullet_top = Inches(2.6)
+        bullet_top = Inches(2.1)
         for i, bullet in enumerate(bullets):
-            _add_bullet(slide, PAD_H, bullet_top + Inches(i * 0.72),
+            _add_bullet(slide, PAD_H, bullet_top + Inches(i * 0.85),
                         CONTENT_W, bullet, accent)
 
-    # Citation (if present — structured format, clearly readable)
+    # Citation block — visible, with mini divider separator
     if citation:
-        _add_text_box(
-            slide,
-            left=PAD_H, top=Inches(5.8),
-            width=CONTENT_W, height=Inches(0.7),
-            text=f"📚  {citation}",
-            font_name=FONT_BODY, font_size=Pt(18),
-            font_color=CITATION_GRAY
-        )
+        # Mini divider to separate content from citation
+        mini_div_w = Inches(2.5)
+        mini_div_left = (Inches(13.333) - mini_div_w) / 2
+        _add_divider(slide, top=Inches(5.4))
+        # Divider already uses 40% width; place citation below
+        _add_citation(slide, PAD_H, Inches(5.9), CONTENT_W, citation)
 
     # Speaker notes = narration text
     notes_slide = slide.notes_slide

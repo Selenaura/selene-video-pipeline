@@ -128,7 +128,7 @@ def _add_separator_line(slide, left, top, width, color=GOLD_DIM):
 
 
 def _add_watermark(slide):
-    """Add 'SELENE ACADEMIA' watermark at bottom — 12pt gold dim, wide spacing."""
+    """Add 'SELENE ACADEMIA' watermark at bottom — 14pt gold dim, wide spacing."""
     from pptx.oxml.ns import qn
 
     txBox = slide.shapes.add_textbox(
@@ -142,7 +142,7 @@ def _add_watermark(slide):
     run = p.add_run()
     run.text = "S E L E N E   A C A D E M I A"
     run.font.name = FONT_BODY
-    run.font.size = Pt(12)
+    run.font.size = Pt(14)
     run.font.color.rgb = RGBColor(0x8B, 0x76, 0x35)  # Gold dim
     # Letter spacing via XML (300 = 3pt spacing)
     rPr = run._r.get_or_add_rPr()
@@ -251,14 +251,14 @@ def _add_bullet(slide, left, top, width, text, accent_color=GOLD):
     lnSpc.append(spcPct)
     pPr.append(lnSpc)
 
-    # Gold diamond marker
+    # Gold diamond marker — proportional to bullet text
     dot_run = p.add_run()
     dot_run.text = "◆  "
     dot_run.font.name = FONT_BODY
-    dot_run.font.size = Pt(20)
+    dot_run.font.size = Pt(24)
     dot_run.font.color.rgb = accent_color
     dot_run.font.bold = False
-    # White body text at 32pt
+    # White body text — min 30pt per mobile legibility rule
     text_run = p.add_run()
     text_run.text = text
     text_run.font.name = FONT_BODY
@@ -298,14 +298,14 @@ def _add_citation(slide, left, top, width, citation_text):
         icon_run = p.add_run()
         icon_run.text = prefix
         icon_run.font.name = FONT_BODY
-        icon_run.font.size = Pt(16)
+        icon_run.font.size = Pt(18)
         icon_run.font.color.rgb = CITATION_GRAY
 
-        # Citation text — italic
+        # Citation text — italic, min 18pt for mobile
         text_run = p.add_run()
         text_run.text = cite
         text_run.font.name = FONT_BODY
-        text_run.font.size = Pt(16)
+        text_run.font.size = Pt(18)
         text_run.font.color.rgb = CITATION_GRAY
         text_run.font.italic = True
 
@@ -366,92 +366,107 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         alignment=PP_ALIGN.RIGHT
     )
 
-    # Title — centered and larger for title/quote slides
+    # ── TITLE SLIDE ──────────────────────────────────────────────
     if slide_type == "title":
         _add_moon(slide)
-        # Title text is the protagonist — centered vertically in the slide
+        # Title — 54pt gold, centered vertically
         _add_text_box(
             slide,
-            left=PAD_H, top=Inches(3.4),
+            left=PAD_H, top=Inches(3.2),
             width=CONTENT_W, height=Inches(1.5),
             text=title,
-            font_name=FONT_DISPLAY, font_size=Pt(48),
+            font_name=FONT_DISPLAY, font_size=Pt(54),
             font_color=GOLD_LIGHT, bold=True,
             alignment=PP_ALIGN.CENTER
         )
-        # Divider sits right below title
-        _add_divider(slide, top=Inches(4.9))
+        _add_divider(slide, top=Inches(4.8))
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
             _add_text_box(
                 slide,
-                left=PAD_H, top=Inches(5.4),
+                left=PAD_H, top=Inches(5.3),
                 width=CONTENT_W, height=Inches(0.6),
                 text=subtitle,
-                font_name=FONT_BODY, font_size=Pt(22),
+                font_name=FONT_BODY, font_size=Pt(24),
                 font_color=BODY_WHITE,
                 alignment=PP_ALIGN.CENTER
             )
+
+    # ── QUOTE SLIDE ─────────────────────────────────────────────
+    # Minimal: just quote + author, lots of breathing room
     elif slide_type == "quote":
-        # Large quote centered
         _add_text_box(
             slide,
-            left=PAD_H, top=Inches(2.0),
-            width=CONTENT_W, height=Inches(2.5),
+            left=Inches(1.8), top=Inches(2.0),
+            width=Inches(9.733), height=Inches(3.0),
             text=f"❝ {title}",
-            font_name=FONT_DISPLAY, font_size=Pt(32),
+            font_name=FONT_DISPLAY, font_size=Pt(36),
             font_color=BODY_WHITE, bold=False,
             alignment=PP_ALIGN.CENTER
         )
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
-            _add_divider(slide, top=Inches(4.5))
             _add_text_box(
                 slide,
-                left=PAD_H, top=Inches(5.0),
-                width=CONTENT_W, height=Inches(0.5),
+                left=Inches(1.8), top=Inches(5.2),
+                width=Inches(9.733), height=Inches(0.6),
                 text=f"— {subtitle}",
-                font_name=FONT_BODY, font_size=Pt(20),
-                font_color=CITATION_GRAY,
+                font_name=FONT_BODY, font_size=Pt(24),
+                font_color=GOLD,
                 alignment=PP_ALIGN.CENTER
             )
+
+    # ── HOOK SLIDE ──────────────────────────────────────────────
+    # Question is protagonist: 44pt centered, citation below
+    elif slide_type == "hook":
+        _add_text_box(
+            slide,
+            left=PAD_H, top=Inches(2.2),
+            width=CONTENT_W, height=Inches(2.5),
+            text=title,
+            font_name=FONT_DISPLAY, font_size=Pt(44),
+            font_color=BODY_WHITE, bold=True,
+            alignment=PP_ALIGN.CENTER
+        )
+        if citation:
+            _add_divider(slide, top=Inches(5.0))
+            _add_citation(slide, PAD_H, Inches(5.5), CONTENT_W, citation)
+
+    # ── CONTENT / SCIENCE / PRACTICE / SUMMARY ─────────────────
     else:
-        # --- Vertically center the content block ---
-        # Usable area: top ~1.1" (below ornaments) to ~6.4" (above watermark)
+        # Vertically center the content block
         area_top = Inches(1.1)
         area_bottom = Inches(6.4)
-        area_h = area_bottom - area_top  # ~5.3"
+        area_h = area_bottom - area_top
 
-        # Calculate content block height
-        title_h = Inches(1.0)         # 52pt title
-        sep_gap = Inches(0.35)        # separator + gap
-        bullet_spacing = Inches(0.85) # per bullet
+        title_h = Inches(1.1)         # 54pt title
+        sep_gap = Inches(0.35)
+        bullet_spacing = Inches(0.95) # 32pt bullets need more room
         n_bullets = len(bullets)
-        citation_h = Inches(1.4) if citation else 0  # divider + 2-line citation
+        citation_h = Inches(1.5) if citation else 0
 
         block_h = title_h + sep_gap + (n_bullets * bullet_spacing) + citation_h
         content_top = area_top + max(0, (area_h - block_h) / 2)
 
-        # Title — white, bold, 52pt
+        # Title — 54pt white bold (min size rule)
         _add_text_box(
             slide,
             left=PAD_H, top=int(content_top),
-            width=CONTENT_W, height=Inches(1.0),
+            width=CONTENT_W, height=Inches(1.1),
             text=title,
-            font_name=FONT_DISPLAY, font_size=Pt(52),
+            font_name=FONT_DISPLAY, font_size=Pt(54),
             font_color=BODY_WHITE, bold=True
         )
-        # Separator line under title
         sep_top = int(content_top + title_h)
         _add_separator_line(slide, PAD_H, sep_top, CONTENT_W, accent)
 
         # Bullets
         bullet_start = int(content_top + title_h + sep_gap)
         for i, bullet in enumerate(bullets):
-            _add_bullet(slide, PAD_H, int(bullet_start + Inches(i * 0.85)),
+            _add_bullet(slide, PAD_H, int(bullet_start + Inches(i * 0.95)),
                         CONTENT_W, bullet, accent)
 
-        # Citation block — mini divider + multi-line citation
+        # Citation block
         if citation:
             cite_div_top = int(bullet_start + n_bullets * bullet_spacing + Inches(0.15))
             _add_divider(slide, top=cite_div_top)

@@ -14,17 +14,24 @@ from validator import SETTINGS
 
 VOICE_SETTINGS = SETTINGS["api"]
 VOICES = SETTINGS["voices"]["recommended"]
+FREE_VOICES = SETTINGS["voices"].get("free_tier_fallback", [])
 
 TEST_TEXT = SETTINGS["voices"]["custom_voice_design"]["preview_text"]
 
 
 def list_voices() -> None:
     """Print available voices."""
-    print("\n🎤 Recommended voices:\n")
+    print("\n🎤 Recommended voices (require Starter+ plan):\n")
     for v in VOICES:
         print(f"  {v['name']:12s} — {v['desc']}")
         print(f"  {'':12s}   Use: {v['use_for']}")
         print()
+    if FREE_VOICES:
+        print("🆓 Free-tier premade voices:\n")
+        for v in FREE_VOICES:
+            print(f"  {v['name']:12s} — {v['desc']}")
+            print(f"  {'':12s}   Use: {v['use_for']}")
+            print()
 
 
 def test_voice(voice: dict, output_dir: Path) -> Path:
@@ -69,19 +76,37 @@ def test_all_voices(output_dir: Path = Path("output/voice_tests")) -> list[Path]
     print(f"   Settings: stability={VOICE_SETTINGS['elevenlabs_stability']}, "
           f"similarity={VOICE_SETTINGS['elevenlabs_similarity']}, "
           f"style={VOICE_SETTINGS['elevenlabs_style']}")
-    print(f"   Voices: {len(VOICES)}\n")
+    print(f"   Voices: {len(VOICES)} recommended + {len(FREE_VOICES)} free-tier\n")
 
     results = []
+    used_free_fallback = False
     for voice in VOICES:
         try:
             path = test_voice(voice, output_dir)
             results.append(path)
         except Exception as e:
-            print(f"     ❌ Failed: {e}")
+            err_msg = str(e)
+            if "402" in err_msg or "payment_required" in err_msg or "paid_plan_required" in err_msg:
+                print(f"     ⚠️  Library voice '{voice['name']}' requires paid plan, skipping.")
+                used_free_fallback = True
+            else:
+                print(f"     ❌ Failed: {e}")
+
+    if used_free_fallback and FREE_VOICES:
+        print(f"\n🆓 Testing free-tier premade voices instead...\n")
+        for voice in FREE_VOICES:
+            try:
+                path = test_voice(voice, output_dir)
+                results.append(path)
+            except Exception as e:
+                print(f"     ❌ Failed: {e}")
 
     print(f"\n{'='*50}")
     print(f"📊 Generated {len(results)} voice samples in {output_dir}/")
     print(f"   Listen and compare, then set the chosen voice_id in config/settings.json")
+    if used_free_fallback:
+        print(f"   💡 Tip: upgrade to Starter ($5/mo) for native Spanish voices,")
+        print(f"      or use --tts kokoro (free, local, native Spanish)")
     print(f"{'='*50}\n")
     return results
 
@@ -98,7 +123,8 @@ def main():
             voice_name = sys.argv[idx + 1]
 
     if voice_name:
-        voice = next((v for v in VOICES if v["name"].lower() == voice_name.lower()), None)
+        all_voices = VOICES + FREE_VOICES
+        voice = next((v for v in all_voices if v["name"].lower() == voice_name.lower()), None)
         if not voice:
             print(f"❌ Voice '{voice_name}' not found. Use --list to see options.")
             sys.exit(1)

@@ -1,0 +1,174 @@
+{
+  "courses": [
+    {
+      "id": "brujula-interior",
+      "title": "Despierta tu Brújula Interior",
+      "level": "Nivel 0 — Inicio",
+      "price": "GRATIS",
+      "hours": "12h",
+      "target_audience": "Personas curiosas que quieren entender la espiritualidad desde una perspectiva científica. Sin conocimientos previos.",
+      "science_base": "Neuroplasticidad (MBSR — Kabat-Zinn), cronobiología introductoria, eje intestino-cerebro (Mayer 2011)",
+      "learning_outcome": "Al terminar, sabrás cómo funciona tu cerebro a nivel emocional, tendrás tu carta natal interpretada, y habrás practicado meditación basada en evidencia.",
+      "modules": {
+        "1": "Fundamentos de consciencia",
+        "2": "Tu mapa cósmico",
+        "3": "Meditación basada en evidencia",
+        "4": "Intuición entrenada",
+        "5": "Autoconocimiento integrado",
+        "6": "Tu camino"
+      },
+      "lessons": [
+        {
+          "module": 1,
+          "title": "¿Qué es la espiritualidad consciente?",
+          "description": "No es fe ciega: es atención entrenada. Diferencia entre creencia, práctica y experiencia. Tu cerebro como antena. Neuroplasticidad: la ciencia dice que puedes cambiar tu cableado. Estudios: Lazar (2005) meditación y grosor cortical, Davidson (2003) activación prefrontal izquierda.",
+          "duration_target": 18
+        },
+        {
+          "module": 1,
+          "title": "No es fe ciega: es atención entrenada",
+          "description": "Diferencia entre creer y practicar. Meditación como entrenamiento cognitivo. MBSR de Kabat-Zinn: 8 semanas cambian la estructura del cerebro (amígdala, hipocampo). Estudios: Hölzel et al. (2011) Psychiatry Research; Tang et al. (2015) PNAS. Práctica: ejercicio de atención plena de 5 minutos guiado.",
+          "duration_target": 12
+        },
+        {
+          "module": 1,
+          "title": "Tu cerebro como antena: neuroplasticidad",
+          "description": "Neuroplasticidad: definición y evidencia. El cerebro cambia con la experiencia. Doidge (2007). Merzenich y mapas corticales. Maguire (2000): taxistas de Londres y cambio en hipocampo. Cómo la práctica espiritual modifica circuitos neuronales. Se puede entrenar la intuición.",
+          "duration_target": 15
+        },
+        {
+          "module": 1,
+          "title": "Quiz: Fundamentos de consciencia",
+          "description": "Quiz de 10 preguntas sobre los conceptos del Módulo 1.",
+          "type": "quiz",
+          "duration_target": 5
+        },
+        {
+          "module": 2,
+          "title": "Tu mapa cósmico — La carta natal",
+          "description": "Carta natal explicada. Qué es, qué no es. Posiciones planetarias reales (efemérides JPL). Sol = identidad consciente, Luna = mundo emocional, Ascendente = máscara social. El triángulo de tu identidad. Marco interpretativo: arquetipos junguianos, no predicción.",
+          "duration_target": 22
+        },
+        {
+          "module": 2,
+          "title": "Sol, Luna, Ascendente: tu triángulo",
+          "description": "Profundización en los tres pilares de la carta natal. Sol: propósito vital, energía yang. Luna: necesidades emocionales, mundo interior. Ascendente: primera impresión, cómo te ve el mundo. Ejercicio: identificar los tres en tu carta natal.",
+          "duration_target": 18
+        },
+        {
+          "module": 2,
+          "title": "Cronobiología: tu estación de nacimiento importa",
+          "description": "Estudios PLOS ONE: nacimiento estacional y neurotransmisores. Gonda 2014: temperamento y estación. Current Biology 2013: la Luna afecta el sueño. Melatonina y estación de nacimiento. De la astrología a la biología molecular.",
+          "duration_target": 14
+        },
+        {
+          "module": 2,
+          "title": "Práctica: genera tu carta natal en Selene",
+          "description": "Tutorial paso a paso para generar tu carta natal en la app de Selene. Identificar Sol, Luna, Ascendente. Primeras observaciones. Diario de reflexión: qué resuena y qué no.",
+          "duration_target": 10
+        },
+        {
+          "module": 2,
+          "title": "Quiz: Tu mapa cósmico",
+          "description": "Quiz de 10 preguntas sobre carta natal y cronobiología.",
+          "type": "quiz",
+          "duration_target": 5
+        },
+        {
+          "module": 3,
+          "title": "Meditación y cerebro: la ciencia real",
+          "description": "MBSR: el protocolo con más evidencia. 8 semanas = cambios medibles en el cerebro. Lazar (2005): grosor cortical en meditadores. Hölzel (2011): reducción de amígdala. Davidson (2003): activación prefrontal izquierda. Meta-análisis: Goyal et al. (2014) JAMA Internal Medicine.",
+          "duration_target": 20
+        },
+        {
+          "module": 3,
+          "title": "MBSR: el protocolo con más evidencia",
+          "description": "Jon Kabat-Zinn y los orígenes de MBSR. Estructura del programa de 8 semanas. Evidencia: ansiedad, dolor crónico, estrés. Cómo adaptar MBSR a tu vida diaria. Diferencia entre meditación casual y práctica basada en evidencia.",
+          "duration_target": 16
+        },
+        {
+          "module": 3,
+          "title": "Tu primera meditación guiada",
+          "description": "Práctica guiada de meditación mindfulness de 10 minutos. Instrucciones claras, paso a paso. Respiración, body scan, observación sin juicio. Formato audio-visual con slides de apoyo.",
+          "duration_target": 15
+        },
+        {
+          "module": 3,
+          "title": "Quiz: Meditación basada en evidencia",
+          "description": "Quiz sobre MBSR, neurociencia de la meditación.",
+          "type": "quiz",
+          "duration_target": 5
+        },
+        {
+          "module": 4,
+          "title": "El péndulo interno: intuición vs. ego",
+          "description": "Bechara, Damasio et al. (1997): marcadores somáticos. Kahneman (2011): Sistema 1 vs Sistema 2. Lieberman (2000): intuición como inteligencia inconsciente. Cómo distinguir intuición real de miedo/deseo. Señales corporales de la intuición genuina.",
+          "duration_target": 15
+        },
+        {
+          "module": 4,
+          "title": "Señales del cuerpo: el eje intestino-cerebro",
+          "description": "Mayer (2011): el eje intestino-cerebro. Células enterocromafines y serotonina. El 'segundo cerebro': 100 millones de neuronas en el intestino. Las 'corazonadas' tienen base neurológica. Escuchar al cuerpo como práctica.",
+          "duration_target": 14
+        },
+        {
+          "module": 4,
+          "title": "Práctica: escucha tu intuición 7 días",
+          "description": "Protocolo de 7 días: registrar señales intuitivas. Diario: situación, señal corporal, decisión, resultado. Al final de la semana: patrones. Estudios de soporte: Bechara (1997), Damasio.",
+          "duration_target": 10
+        },
+        {
+          "module": 4,
+          "title": "Quiz: Intuición entrenada",
+          "description": "Quiz sobre intuición, marcadores somáticos, eje intestino-cerebro.",
+          "type": "quiz",
+          "duration_target": 5
+        },
+        {
+          "module": 5,
+          "title": "Los 4 pilares del autoconocimiento",
+          "description": "Pilar 1: Tu cuerpo (cronobiología, señales somáticas). Pilar 2: Tu mente (neuroplasticidad, patrones cognitivos). Pilar 3: Tu energía (ritmos, ciclos lunares y circadianos). Pilar 4: Tu propósito (carta natal como mapa, no destino). Integración de los cuatro.",
+          "duration_target": 18
+        },
+        {
+          "module": 5,
+          "title": "Tu perfil energético: descúbrelo",
+          "description": "Cronotipo (lobo, león, delfín, oso) + tu Sol/Ascendente. Cuándo rindes mejor. Cuándo tu creatividad fluye. Cuándo necesitas descanso. Mapa de energía personal: metodología y ejercicio.",
+          "duration_target": 20
+        },
+        {
+          "module": 5,
+          "title": "Práctica: mapa de energía personal",
+          "description": "Ejercicio guiado de 7 días: registrar niveles de energía cada 2 horas. Cruzar con fases lunares y tu carta natal. Identificar patrones. Diseñar tu día ideal basado en datos reales.",
+          "duration_target": 12
+        },
+        {
+          "module": 5,
+          "title": "Quiz: Autoconocimiento",
+          "description": "Quiz sobre los 4 pilares y el perfil energético.",
+          "type": "quiz",
+          "duration_target": 5
+        },
+        {
+          "module": 6,
+          "title": "Tu hoja de ruta formativa",
+          "description": "Según tu carta natal, intereses y resultados de los quizzes: qué cursos te convienen más. Ruta recomendada por perfil. Preview de cada curso avanzado. Tu siguiente paso concreto.",
+          "duration_target": 15
+        },
+        {
+          "module": 6,
+          "title": "Resumen: lo que has aprendido",
+          "description": "Recapitulación de los 5 módulos. Conceptos clave. Estudios citados. Prácticas realizadas. Celebración del progreso. Preparación para la evaluación final.",
+          "duration_target": 10
+        },
+        {
+          "module": 6,
+          "title": "Evaluación final + Certificado",
+          "description": "Evaluación de 20 preguntas cubriendo los 6 módulos. Requiere 70% para certificado. Certificado digital con código verificable.",
+          "type": "exam",
+          "duration_target": 15
+        }
+      ]
+    }
+  ]
+}

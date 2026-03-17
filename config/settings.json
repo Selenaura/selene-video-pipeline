@@ -1,0 +1,135 @@
+{
+  "brand": {
+    "name": "Selene Academia",
+    "claim": "Ciencia y consciencia de lo invisible",
+    "voice_persona": "Amiga brillante que sabe de ciencia y tradición simbólica. Cálida, cercana, inteligente. Nunca clínica ni fantasiosa.",
+    "banned_terms": ["inteligencia artificial", " ia ", " IA ", "algoritmo", "machine learning", "chatbot", "bot ", "modelo de lenguaje", "LLM"]
+  },
+
+  "api": {
+    "claude_model": "claude-sonnet-4-20250514",
+    "claude_max_tokens": 4096,
+
+    "_elevenlabs_note": "eleven_multilingual_v2 es mejor para educación: estable, 40K chars/request, calidad premium. eleven_v3 es más expresivo pero limitado a 5K chars y en alpha — usar solo para segmentos cortos/emocionales.",
+    "elevenlabs_model": "eleven_multilingual_v2",
+    "elevenlabs_model_alt": "eleven_v3",
+    "elevenlabs_language_code": "es",
+
+    "_voice_settings_note": "Stability 0.40 = expresivo sin inestabilidad. Similarity 0.78 = fiel al original. Style 0.15 = emoción sutil (>0.30 causa artefactos en scripts largos). Speed 0.95 = ligeramente más lento que natural (mejor para educación). ElevenLabs docs: 'For educational content, choose a calm voice and set Stability high.'",
+    "elevenlabs_stability": 0.40,
+    "elevenlabs_similarity": 0.78,
+    "elevenlabs_style": 0.15,
+    "elevenlabs_speed": 0.95,
+    "elevenlabs_use_speaker_boost": true
+  },
+
+  "voices": {
+    "_selection_guide": "Paso 1: Probar las recomendadas en español. Paso 2: Si ninguna convence, crear una voz custom con Voice Design. Paso 3: Para máxima calidad, hacer Instant Voice Clone con 3+ muestras de audio limpio.",
+    "recommended": [
+      {
+        "name": "Sarah",
+        "id": "EXAVITQu4vr4xnSDxMaL",
+        "desc": "Female, expressive, social, energetic — Good for narration in Spanish",
+        "use_for": "Lecciones estándar (contenido, ciencia, resúmenes)"
+      },
+      {
+        "name": "Lily",
+        "id": "pFZP5JQG7iQjIQuC4Bku",
+        "desc": "Female, calm young, soothing — Great for meditation/wellness",
+        "use_for": "Meditaciones guiadas, prácticas, body scan"
+      },
+      {
+        "name": "Jessica",
+        "id": "cgSgspJ2msm6clMCkdW9",
+        "desc": "Female, warm, conversational — Natural for educational content",
+        "use_for": "Alternativa principal si Sarah suena demasiado energética"
+      }
+    ],
+    "custom_voice_design": {
+      "_instructions": "Usar en ElevenLabs Voice Design (Voices → My Voices → Add → Voice Design). Genera 3 opciones. Seleccionar la mejor. Requiere plan Starter+. La voz se guarda en My Voices y se obtiene su voice_id.",
+      "prompt": "Native Spanish speaker from Spain, specifically Castilian accent without Latin American features. Female, age 32. High audio quality. Persona: a university professor who also practices yoga and meditation. Her voice is warm, intimate, and knowledgeable but never cold or clinical. Clear enunciation with medium pace and gentle intonation. She speaks as if sharing fascinating discoveries with a close friend over tea. Slightly breathy quality that conveys genuine curiosity and passion for the subject.",
+      "preview_text": "¿Sabías que tu cerebro cambia físicamente después de solo ocho semanas de meditación? No es magia, es neuroplasticidad. En dos mil cinco, la investigadora Sara Lazar demostró que meditar aumenta el grosor de la corteza cerebral. Tu cerebro es mucho más flexible de lo que imaginas."
+    }
+  },
+
+  "design": {
+    "slide_width": 16,
+    "slide_height": 9,
+    "colors": {
+      "bg": "0A0A0F",
+      "bg_gradient_end": "10101A",
+      "card": "12121A",
+      "gold": "C9A84C",
+      "gold_light": "E8D5A0",
+      "gold_dim": "8B7635",
+      "white": "F0EDE4",
+      "dim": "A8A4A0",
+      "blue": "4A6FA5",
+      "violet": "7B68AE",
+      "teal": "5B9E8F",
+      "rose": "C97B8B"
+    },
+    "fonts": {
+      "display": "Cormorant Garamond",
+      "body": "Outfit",
+      "fallback_display": "Georgia",
+      "fallback_body": "Calibri"
+    },
+    "slide_types": {
+      "title":    { "accent": "gold",  "icon": "☽" },
+      "content":  { "accent": "gold",  "icon": "◆" },
+      "science":  { "accent": "blue",  "icon": "🔬" },
+      "quote":    { "accent": "gold",  "icon": "❝" },
+      "practice": { "accent": "teal",  "icon": "🧘" },
+      "summary":  { "accent": "gold",  "icon": "✦" },
+      "hook":     { "accent": "violet","icon": "✧" }
+    }
+  },
+
+  "video": {
+    "resolution": "1920x1080",
+    "format": "mp4",
+    "codec": "libx264",
+    "crf": 23,
+    "preset": "medium",
+    "audio_bitrate": "192k",
+    "audio_format": "mp3_44100_128",
+    "words_per_minute": 150,
+    "min_slide_seconds": 8,
+    "max_slide_seconds": 60,
+    "fade_duration": 0.5,
+    "inter_slide_silence": 0.8,
+    "thumbnail_size": [1280, 720],
+
+    "_ffmpeg_assembly_note": "Pipeline: 1) PPTX → PNG (via LibreOffice headless). 2) Para cada slide: imagen + audio → segmento MP4. 3) Concatenar segmentos con crossfade. Comando: libreoffice --headless --convert-to png --outdir ./frames file.pptx"
+  },
+
+  "output": {
+    "dir": "output",
+    "generate_srt": true,
+    "generate_thumbnail": true,
+    "generate_transcript": true,
+    "generate_quiz_json": true,
+    "srt_max_chars_per_line": 42,
+    "srt_max_lines": 2
+  },
+
+  "narration_ssml": {
+    "_note": "SSML <break> tags work on multilingual_v2. Use for natural pauses. ElevenLabs also responds to punctuation: ellipsis (…) adds short pause, em-dash (—) adds medium pause.",
+    "between_slides": "<break time=\"1.2s\"/>",
+    "after_question": "<break time=\"0.8s\"/>",
+    "before_citation": "<break time=\"0.5s\"/>",
+    "paragraph_pause": "…"
+  },
+
+  "quality_checks": {
+    "min_citations_per_lesson": 2,
+    "min_slides": 6,
+    "max_slides": 16,
+    "min_narration_words_per_slide": 20,
+    "max_narration_words_per_slide": 150,
+    "max_bullets_per_slide": 4,
+    "max_words_per_bullet": 12,
+    "required_slide_types": ["hook", "content", "summary"]
+  }
+}

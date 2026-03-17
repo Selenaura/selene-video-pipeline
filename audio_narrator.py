@@ -1,7 +1,14 @@
-"""Generate audio narration using ElevenLabs SDK."""
+"""Generate audio narration using ElevenLabs SDK or Kokoro TTS (free fallback).
+
+TTS Engine selection:
+  1. ElevenLabs (default): Best quality, requires API key, ~€0.15/lesson
+  2. Kokoro (--tts kokoro): Free, local, 82M params, Apache license, Spanish support
+  3. Dry-run: Silent MP3 placeholders, no API needed
+"""
 
 import json
 import os
+import re
 from pathlib import Path
 
 from validator import SETTINGS
@@ -9,6 +16,14 @@ from validator import SETTINGS
 API_CONFIG = SETTINGS["api"]
 SSML_CONFIG = SETTINGS["narration_ssml"]
 VOICES = SETTINGS["voices"]
+
+# TTS engine detection
+_KOKORO_AVAILABLE = False
+try:
+    import kokoro
+    _KOKORO_AVAILABLE = True
+except ImportError:
+    pass
 
 
 def get_voice_id() -> str:
@@ -96,8 +111,59 @@ def synthesize_audio(text: str, output_path: str, voice_id: str = None,
     }
 
 
+def _strip_ssml(text: str) -> str:
+    """Remove SSML tags for TTS engines that don't support them."""
+    return re.sub(r'<[^>]+>', '', text).strip()
+
+
+def synthesize_kokoro(text: str, output_path: str) -> dict:
+    """Synthesize audio using Kokoro TTS (free, local, 82M params)."""
+    import soundfile as sf
+    from kokoro import KPipeline
+
+    # Strip SSML tags — Kokoro doesn't support them
+    clean_text = _strip_ssml(text)
+
+    pipeline = KPipeline(lang_code='e')  # 'e' = Spanish
+    samples = None
+    sr = 24000
+
+    for _, _, audio in pipeline(clean_text):
+        if samples is None:
+            samples = audio
+        else:
+            import numpy as np
+            samples = np.concatenate([samples, audio])
+
+    if samples is not None:
+        # Save as WAV first, then convert to MP3 if ffmpeg available
+        wav_path = output_path.replace('.mp3', '.wav') if output_path.endswith('.mp3') else output_path
+        sf.write(wav_path, samples, sr)
+
+        # Convert to MP3 if ffmpeg is available
+        import shutil
+        if shutil.which("ffmpeg") and output_path.endswith('.mp3'):
+            import subprocess
+            subprocess.run([
+                "ffmpeg", "-y", "-i", wav_path,
+                "-b:a", "128k", output_path
+            ], capture_output=True, timeout=30)
+            Path(wav_path).unlink(missing_ok=True)
+        elif output_path.endswith('.mp3'):
+            # No ffmpeg — keep as WAV
+            Path(wav_path).rename(output_path)
+
+    duration = len(samples) / sr if samples is not None else 0
+    return {
+        "path": output_path,
+        "duration_seconds": duration,
+        "char_count": len(clean_text),
+        "cost_estimate": 0,
+    }
+
+
 def narrate_lesson(script_path: str | Path, output_dir: str | Path = None,
-                   dry_run: bool = False) -> dict:
+                   dry_run: bool = False, tts_engine: str = "elevenlabs") -> dict:
     """Generate audio for all slides in a lesson script.
 
     Returns summary dict with total chars, cost, duration, and per-slide info.
@@ -139,11 +205,17 @@ def narrate_lesson(script_path: str | Path, output_dir: str | Path = None,
         print(f"  🎙 Slide {item['slide_index']} ({item['slide_type']}): "
               f"{item['char_count']} chars...")
 
-        result = synthesize_audio(
-            text=item["text"],
-            output_path=str(audio_file),
-            dry_run=dry_run,
-        )
+        if tts_engine == "kokoro" and _KOKORO_AVAILABLE and not dry_run:
+            result = synthesize_kokoro(
+                text=item["text"],
+                output_path=str(audio_file),
+            )
+        else:
+            result = synthesize_audio(
+                text=item["text"],
+                output_path=str(audio_file),
+                dry_run=dry_run,
+            )
 
         total_chars += result["char_count"]
         total_cost += result.get("cost_estimate", 0)
@@ -169,8 +241,8 @@ def narrate_lesson(script_path: str | Path, output_dir: str | Path = None,
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
-    mode = "dry-run" if dry_run else "ElevenLabs"
-    print(f"  🔊 Audio complete ({mode}): {len(slide_audio)} slides, "
+    engine_name = "dry-run" if dry_run else ("Kokoro" if tts_engine == "kokoro" else "ElevenLabs")
+    print(f"  🔊 Audio complete ({engine_name}): {len(slide_audio)} slides, "
           f"{total_chars} chars, ~{summary['total_duration_minutes']} min, "
           f"~€{total_cost:.4f}")
 
@@ -193,7 +265,12 @@ def _create_silent_mp3(path: str):
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
-        print("Usage: python audio_narrator.py <script.json> [--dry-run]")
+        print("Usage: python audio_narrator.py <script.json> [--dry-run] [--tts kokoro|elevenlabs]")
         sys.exit(1)
     dry = "--dry-run" in sys.argv
-    narrate_lesson(sys.argv[1], dry_run=dry)
+    engine = "elevenlabs"
+    if "--tts" in sys.argv:
+        idx = sys.argv.index("--tts")
+        if idx + 1 < len(sys.argv):
+            engine = sys.argv[idx + 1]
+    narrate_lesson(sys.argv[1], dry_run=dry, tts_engine=engine)

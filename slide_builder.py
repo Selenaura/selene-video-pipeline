@@ -43,13 +43,37 @@ ACCENT_COLORS = {
 FONT_DISPLAY = FONTS["fallback_display"]  # Georgia (safe fallback)
 FONT_BODY = FONTS["fallback_body"]        # Calibri (safe fallback)
 
+# Asset paths
+ASSETS_DIR = Path(__file__).parent / "assets"
+BG_MAP = {
+    "title": "bg_title.png",
+    "hook": "bg_title.png",
+    "content": "bg_content.png",
+    "science": "bg_science.png",
+    "practice": "bg_practice.png",
+    "quote": "bg_quote.png",
+    "summary": "bg_summary.png",
+    "cta": "bg_summary.png",
+}
+MOON_PATH = ASSETS_DIR / "decorations" / "moon_face.png"
+DIVIDER_PATH = ASSETS_DIR / "decorations" / "divider_star.png"
+CORNER_PATH = ASSETS_DIR / "decorations" / "corner_ornaments.png"
+CONSTELLATION_PATH = ASSETS_DIR / "decorations" / "constellation_overlay.png"
 
-def _set_slide_bg(slide, color=BG_COLOR):
-    """Set solid background color on a slide."""
-    bg = slide.background
-    fill = bg.fill
-    fill.solid()
-    fill.fore_color.rgb = color
+
+def _set_slide_bg(slide, prs, slide_type="content"):
+    """Set slide background: image if available, else solid color."""
+    bg_file = BG_MAP.get(slide_type, "bg_content.png")
+    bg_path = ASSETS_DIR / "backgrounds" / bg_file
+    if bg_path.exists():
+        slide.shapes.add_picture(
+            str(bg_path), 0, 0, prs.slide_width, prs.slide_height
+        )
+    else:
+        bg = slide.background
+        fill = bg.fill
+        fill.solid()
+        fill.fore_color.rgb = BG_COLOR
 
 
 def _add_text_box(slide, left, top, width, height, text, font_name=FONT_BODY,
@@ -103,20 +127,66 @@ def _add_watermark(slide):
 
 
 def _add_corner_ornaments(slide, color=GOLD_DIM):
-    """Add corner ornament symbols ✦."""
-    positions = [
-        (Inches(0.3), Inches(0.2)),   # top-left
-        (Inches(12.5), Inches(0.2)),  # top-right
-        (Inches(0.3), Inches(6.9)),   # bottom-left
-        (Inches(12.5), Inches(6.9)),  # bottom-right
-    ]
-    for left, top in positions:
-        _add_text_box(
-            slide, left, top, Inches(0.5), Inches(0.4),
-            text="✦",
-            font_size=Pt(14), font_color=color,
-            alignment=PP_ALIGN.CENTER
+    """Add corner ornaments: image asset if available, else text ✦."""
+    if CORNER_PATH.exists():
+        # Corner ornaments image is a single image with 4 corners.
+        # Place it as a full-slide overlay — the PNG has transparent center.
+        slide.shapes.add_picture(
+            str(CORNER_PATH), 0, 0,
+            Inches(13.333), Inches(7.5)
         )
+    else:
+        positions = [
+            (Inches(0.3), Inches(0.2)),
+            (Inches(12.5), Inches(0.2)),
+            (Inches(0.3), Inches(6.9)),
+            (Inches(12.5), Inches(6.9)),
+        ]
+        for left, top in positions:
+            _add_text_box(
+                slide, left, top, Inches(0.5), Inches(0.4),
+                text="✦",
+                font_size=Pt(14), font_color=color,
+                alignment=PP_ALIGN.CENTER
+            )
+
+
+def _add_moon(slide):
+    """Add moon_face decoration on title slides."""
+    if MOON_PATH.exists():
+        slide.shapes.add_picture(
+            str(MOON_PATH),
+            Inches(5.2), Inches(0.2),
+            Inches(3), Inches(3)
+        )
+
+
+def _add_divider(slide):
+    """Add star divider below title."""
+    if DIVIDER_PATH.exists():
+        slide.shapes.add_picture(
+            str(DIVIDER_PATH),
+            Inches(3), Inches(1.8),
+            Inches(7.333), Inches(0.5)
+        )
+
+
+def _add_constellation(slide):
+    """Add constellation overlay at low opacity for content/science slides."""
+    if CONSTELLATION_PATH.exists():
+        pic = slide.shapes.add_picture(
+            str(CONSTELLATION_PATH), 0, 0,
+            Inches(13.333), Inches(7.5)
+        )
+        # Set opacity via XML (alpha = 12% = 12000 out of 100000)
+        from pptx.oxml.ns import qn
+        from lxml import etree
+        spPr = pic._element.find(qn('p:blipFill'))
+        if spPr is not None:
+            blip = spPr.find(qn('a:blip'))
+            if blip is not None:
+                alphaModFix = etree.SubElement(blip, qn('a:alphaModFix'))
+                alphaModFix.set('amt', '12000')
 
 
 def _get_accent_color(slide_type: str) -> RGBColor:
@@ -146,8 +216,13 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
     # Use blank layout
     blank_layout = prs.slide_layouts[6]
     slide = prs.slides.add_slide(blank_layout)
-    _set_slide_bg(slide)
+    _set_slide_bg(slide, prs, slide_type)
     _add_corner_ornaments(slide, GOLD_DIM)
+
+    # Add constellation overlay on content/science slides
+    if slide_type in ("content", "science"):
+        _add_constellation(slide)
+
     _add_watermark(slide)
 
     # Slide type badge (top-left area) — skip for title slides
@@ -175,20 +250,22 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
 
     # Title — centered and larger for title/quote slides
     if slide_type == "title":
+        _add_moon(slide)
         _add_text_box(
             slide,
-            left=Inches(1.5), top=Inches(2.2),
+            left=Inches(1.5), top=Inches(3.2),
             width=Inches(10), height=Inches(1.5),
             text=title,
             font_name=FONT_DISPLAY, font_size=Pt(44),
             font_color=GOLD_LIGHT, bold=True,
             alignment=PP_ALIGN.CENTER
         )
+        _add_divider(slide)
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
             _add_text_box(
                 slide,
-                left=Inches(1.5), top=Inches(3.8),
+                left=Inches(1.5), top=Inches(4.8),
                 width=Inches(10), height=Inches(0.5),
                 text=subtitle,
                 font_name=FONT_BODY, font_size=Pt(18),
@@ -208,7 +285,7 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         )
         subtitle = slide_data.get("subtitle", "")
         if subtitle:
-            _add_separator_line(slide, Inches(4), Inches(4.2), Inches(5), GOLD_DIM)
+            _add_divider(slide)
             _add_text_box(
                 slide,
                 left=Inches(1.5), top=Inches(4.5),

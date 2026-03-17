@@ -1,14 +1,19 @@
 # Video Pipeline — Task Plan
 
-## Phase 0: Evaluate slide-stream [CRITICAL — DO THIS FIRST]
-- [ ] `pip install slide-stream[all-ai]` and run `slide-stream providers`
-- [ ] Create a test Markdown file with 3 slides and Spanish narration text
-- [ ] Run `slide-stream create test.md test.mp4` with ElevenLabs configured
-- [ ] **DECISION**: Does slide-stream produce usable output? Y → use it as assembly layer. N → build custom ffmpeg pipeline.
-- [ ] Document decision and reasoning in README.md
+## Phase 0: Evaluate slide-stream [COMPLETED ✓]
+- [x] `pip install slide-stream[all-ai]` and run `slide-stream providers`
+- [x] Create a test Markdown file with 3 slides and Spanish narration text
+- [x] Run `slide-stream create test.md test.mp4` with gTTS (sin API keys de ElevenLabs)
+- [x] **DECISION**: slide-stream NO produce output utilizable para Selene → **pipeline custom**
+- [x] Document decision and reasoning in `docs/phase0_slide_stream_evaluation.md`
 
-**Acceptance**: A 30-second test video exists that plays correctly.
-**If slide-stream fails**: Skip to Phase 1-ALT below. The script generator and PPTX template work regardless.
+**Resultado**: Video de 51s generado correctamente (1920x1080, 24fps), pero slide-stream tiene limitaciones críticas:
+- Hardcoded `eleven_monolingual_v1` (necesitamos `eleven_multilingual_v2` con settings custom)
+- No soporta templates PPTX (solo extrae texto, ignora diseño Quantum Ethereal)
+- No genera SRT, no pasa SSML, no pasa `language_code: "es"`
+- Sin validación pedagógica ni enforcement de hard constraints
+
+**Decisión**: Pipeline custom con python-pptx + elevenlabs SDK + moviepy/ffmpeg.
 
 ## Phase 1: Script Generator
 - [ ] Build `script_generator.py` with Claude API call
@@ -29,7 +34,7 @@
 - [ ] Background: solid #0A0A0F (gradients optional — LibreOffice may not render them)
 - [ ] Gold line separators, corner ornaments (✦), "SELENE ACADEMIA" watermark
 - [ ] Fonts: Georgia/Calibri as fallbacks (Cormorant Garamond may not be installed)
-- [ ] Speaker notes = narration text (for slide-stream compatibility)
+- [ ] Speaker notes = narration text (útil para revisión manual y export)
 - [ ] Test: generate PPTX for Lesson 0, open in LibreOffice and PowerPoint to verify
 
 **Acceptance**: PPTX opens cleanly in both LibreOffice and PowerPoint with correct styling.
@@ -56,13 +61,9 @@
 **Acceptance**: SRT plays in sync with audio in VLC player.
 
 ## Phase 5: Video Assembly
-**If using slide-stream**: 
-- [ ] Convert script.json → slide-stream compatible Markdown
-- [ ] Run slide-stream with custom config to produce final MP4
-
-**If custom pipeline**:
+**Custom pipeline** (slide-stream descartado en Phase 0):
 - [ ] Export PPTX → PNG frames via LibreOffice headless (`libreoffice --headless --convert-to png`)
-- [ ] For each slide: combine PNG + audio MP3 → segment MP4 using ffmpeg
+- [ ] For each slide: combine PNG + audio MP3 → segment MP4 using moviepy
 - [ ] Concatenate all segments with crossfade transitions (0.5s)
 - [ ] Burn SRT subtitles into video (or keep as sidecar file)
 - [ ] Output: `{lesson_name}.mp4` in output directory
@@ -90,8 +91,9 @@
 ## Mejoras aplicadas (por iniciativa propia)
 _Documenta aquí cualquier mejora, cambio de arquitectura o decisión técnica que hayas tomado fuera del plan original. Formato: fecha, qué, por qué._
 
-Ejemplo:
-- 2026-03-18: Reemplazado slide-stream por pipeline custom porque no soportaba templates PPTX personalizados.
+- 2026-03-17: **Phase 0 — slide-stream descartado, pipeline custom confirmado.** Análisis exhaustivo del código fuente de slide-stream (1,550 líneas, 11 archivos). El paquete produce vídeo funcional pero tiene ElevenLabs hardcoded a `eleven_monolingual_v1`, no soporta templates PPTX, no genera SRT, no pasa SSML ni `language_code`. Requeriría parchear 5 de 6 componentes internos. Más eficiente construir sobre las librerías subyacentes (python-pptx, elevenlabs SDK, moviepy) que ya vienen instaladas como dependencias. Evaluación detallada en `docs/phase0_slide_stream_evaluation.md`.
+- 2026-03-17: **Creado directorio `docs/` para documentación técnica.** Separa las evaluaciones y decisiones de arquitectura del código y la configuración. Primer documento: evaluación de slide-stream.
+- 2026-03-17: **Eliminada referencia a slide-stream en Phase 2** (speaker notes "for slide-stream compatibility" ya no aplica, pero se mantienen speaker notes por utilidad general).
 
 ---
 

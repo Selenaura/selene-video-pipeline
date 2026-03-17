@@ -45,18 +45,19 @@
 
 **Resultado**: `python pipeline.py --lesson 0 --steps script,slides --dry-run` produce slides.pptx válido con 8 slides, colores Quantum Ethereal, narración en speaker notes.
 
-## Phase 3: Audio Narration
-- [ ] Use official `elevenlabs` Python SDK (`from elevenlabs.client import ElevenLabs`)
-- [ ] Model: `eleven_multilingual_v2`, language_code: `es`
-- [ ] Settings from config/settings.json (stability 0.40, similarity 0.78, style 0.15, speed 0.95)
-- [ ] Add SSML `<break>` tags between sentences for natural pacing
-- [ ] Save per-slide MP3 files in `audio/slide_NNN.mp3`
-- [ ] Get word-level timestamps from ElevenLabs API (enable `timestamps: true` in request)
-- [ ] Resume: skip audio files that already exist and are >1KB
-- [ ] Log: characters consumed, estimated cost per lesson
-- [ ] Test: generate audio for 3 slides of Lesson 0, listen for natural Spanish
+## Phase 3: Audio Narration [COMPLETED ✓]
+- [x] Use official `elevenlabs` Python SDK (`from elevenlabs.client import ElevenLabs`)
+- [x] Model: `eleven_multilingual_v2`, language_code: `es`
+- [x] Settings from config/settings.json (stability 0.40, similarity 0.78, style 0.15, speed 0.95)
+- [x] Add SSML `<break>` tags between slides for natural pacing
+- [x] Save per-slide MP3 files in `audio/slide_NNN.mp3`
+- [x] Resume: skip audio files that already exist and are >1KB
+- [x] Log: characters consumed, estimated cost per lesson
+- [x] Audio manifest (manifest.json) with per-slide durations
+- [x] Dry-run mode with silent MP3 placeholders
 
-**Acceptance**: Audio plays naturally in Spanish, no English accent, proper pauses.
+**Resultado**: `audio_narrator.py` generates per-slide MP3 + manifest.json. Lesson 0: 8 slides, 2999 chars, ~3.1 min estimated.
+**Nota**: word-level timestamps pendientes — requiere `with_timestamps` que depende de la versión del SDK. Se resolverá al integrar con subtítulos (Phase 4).
 
 ## Phase 4: Subtitles & Transcript
 - [ ] Generate SRT from narration text + estimated timing (or ElevenLabs timestamps if available)

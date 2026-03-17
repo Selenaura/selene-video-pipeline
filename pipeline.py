@@ -14,6 +14,7 @@ import json
 import sys
 from pathlib import Path
 
+from audio_narrator import narrate_lesson
 from script_generator import generate_and_save, load_course
 from slide_builder import build_from_script_file
 from validator import validate_script_file
@@ -64,9 +65,17 @@ def run_pipeline(lesson_index: int, course_id: str, steps: list[str],
         else:
             print(f"  ⚠ No script.json found — run 'script' step first")
 
-    # Future steps (Phase 3+)
+    if "audio" in steps:
+        lesson_dir = Path(output_dir) / f"lesson_{lesson_index:02d}"
+        script_file = lesson_dir / "script.json"
+        if script_file.exists():
+            narrate_lesson(script_file, dry_run=dry_run)
+        else:
+            print(f"  ⚠ No script.json found — run 'script' step first")
+
+    # Future steps (Phase 4+)
     for step in steps:
-        if step in ("script", "slides"):
+        if step in ("script", "slides", "audio"):
             continue
         print(f"\n⏳ Step '{step}' not yet implemented (coming in Phase {ALL_STEPS.index(step) + 1})")
 

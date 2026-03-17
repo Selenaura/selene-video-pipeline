@@ -172,21 +172,15 @@ def _add_divider(slide):
 
 
 def _add_constellation(slide):
-    """Add constellation overlay at low opacity for content/science slides."""
+    """Add constellation overlay at low opacity for content/science slides.
+
+    The PNG already has a transparent background (black removed).
+    """
     if CONSTELLATION_PATH.exists():
-        pic = slide.shapes.add_picture(
+        slide.shapes.add_picture(
             str(CONSTELLATION_PATH), 0, 0,
             Inches(13.333), Inches(7.5)
         )
-        # Set opacity via XML (alpha = 12% = 12000 out of 100000)
-        from pptx.oxml.ns import qn
-        from lxml import etree
-        spPr = pic._element.find(qn('p:blipFill'))
-        if spPr is not None:
-            blip = spPr.find(qn('a:blip'))
-            if blip is not None:
-                alphaModFix = etree.SubElement(blip, qn('a:alphaModFix'))
-                alphaModFix.set('amt', '12000')
 
 
 def _get_accent_color(slide_type: str) -> RGBColor:

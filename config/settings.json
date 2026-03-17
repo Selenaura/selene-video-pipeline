@@ -8,7 +8,7 @@
 
   "api": {
     "claude_model": "claude-sonnet-4-20250514",
-    "claude_max_tokens": 4096,
+    "claude_max_tokens": 16384,
 
     "_elevenlabs_note": "eleven_multilingual_v2 es mejor para educación: estable, 40K chars/request, calidad premium. eleven_v3 es más expresivo pero limitado a 5K chars y en alpha — usar solo para segmentos cortos/emocionales.",
     "elevenlabs_model": "eleven_multilingual_v2",

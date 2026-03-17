@@ -208,6 +208,20 @@ def generate_script(lesson: dict, lesson_index: int, course: dict,
 
         raw_text = response.content[0].text.strip()
 
+        # Detect truncated responses before attempting to parse
+        if response.stop_reason == "max_tokens":
+            print(f"  ⚠ Response truncated (hit max_tokens={max_tokens})")
+            if attempt < max_retries:
+                user_prompt += (
+                    "\n\nIMPORTANTE: Tu respuesta anterior fue TRUNCADA por exceder el límite de tokens. "
+                    "Genera un JSON más conciso: reduce el texto de narración, sé más breve en cada slide."
+                )
+                continue
+            raise ValueError(
+                f"Response truncated after {max_retries + 1} attempts. "
+                f"Increase claude_max_tokens (currently {max_tokens}) in config/settings.json."
+            )
+
         # Strip markdown code fences if present
         if raw_text.startswith("```"):
             raw_text = raw_text.split("\n", 1)[1]

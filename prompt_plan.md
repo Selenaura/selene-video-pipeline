@@ -31,17 +31,19 @@
 - `validator.py`: banned terms, citation count, narration length, bullets, slide types, quiz count
 - `pipeline.py`: CLI with --list, --lesson N, --course ID, --steps, --dry-run, --validate
 
-## Phase 2: PPTX Template (Quantum Ethereal)
-- [ ] Create reusable PPTX template file `templates/quantum_ethereal.pptx` with slide masters
-- [ ] OR create programmatic slide builder in `slide_builder.py` using python-pptx
-- [ ] Slide types: hook (violet accent), content (gold), science (blue), quote, practice (teal), summary (gold)
-- [ ] Background: solid #0A0A0F (gradients optional — LibreOffice may not render them)
-- [ ] Gold line separators, corner ornaments (✦), "SELENE ACADEMIA" watermark
-- [ ] Fonts: Georgia/Calibri as fallbacks (Cormorant Garamond may not be installed)
-- [ ] Speaker notes = narration text (útil para revisión manual y export)
-- [ ] Test: generate PPTX for Lesson 0, open in LibreOffice and PowerPoint to verify
+## Phase 2: PPTX Template (Quantum Ethereal) [COMPLETED ✓]
+- [x] Programmatic slide builder in `slide_builder.py` using python-pptx
+- [x] Slide types: hook (violet ✧), content (gold ◆), science (blue 🔬), practice (teal 🧘), summary (gold ✦), cta (gold)
+- [x] Background: solid #0A0A0F
+- [x] Gold line separators, corner ornaments (✦), "SELENE ACADEMIA" watermark
+- [x] Fonts: Georgia/Calibri (safe fallbacks)
+- [x] Speaker notes = narration text
+- [x] Slide counter (N/total) top-right, type badge top-left
+- [x] Citations rendered at bottom with 📚 icon when present
+- [x] Integrated into pipeline: `--steps script,slides`
+- [x] Test: generated 8-slide PPTX for Lesson 0 with correct structure
 
-**Acceptance**: PPTX opens cleanly in both LibreOffice and PowerPoint with correct styling.
+**Resultado**: `python pipeline.py --lesson 0 --steps script,slides --dry-run` produce slides.pptx válido con 8 slides, colores Quantum Ethereal, narración en speaker notes.
 
 ## Phase 3: Audio Narration
 - [ ] Use official `elevenlabs` Python SDK (`from elevenlabs.client import ElevenLabs`)

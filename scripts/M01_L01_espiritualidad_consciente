@@ -1,0 +1,175 @@
+{
+  "lesson_id": "M01_L01",
+  "course": "Despierta tu Brújula Interior",
+  "module": 1,
+  "module_name": "Fundamentos de consciencia",
+  "title": "¿Qué es la espiritualidad consciente?",
+  "duration_minutes": 12,
+
+  "slides": [
+    {
+      "n": 1,
+      "type": "title",
+      "title": "¿Qué es la espiritualidad consciente?",
+      "subtitle": "Módulo 1 · Fundamentos de consciencia",
+      "narration": "Bienvenida a Selene Academia. Soy Selene, y voy a acompañarte en un viaje que cambiará la forma en que entiendes tu propia mente… Tu primera lección empieza ahora.",
+      "duration_seconds": 12
+    },
+    {
+      "n": 2,
+      "type": "hook",
+      "title": "¿Sabías que meditar 8 semanas cambia la estructura física de tu cerebro?",
+      "subtitle": "",
+      "bullets": [],
+      "narration": "Antes de que pienses que esto es misticismo… déjame contarte algo. En dos mil once, un equipo del Hospital General de Massachusetts publicó un estudio en Psychiatry Research: Neuroimaging. Sometieron a un grupo de personas a ocho semanas de meditación mindfulness. ¿El resultado? <break time=\"0.8s\"/> Cambios medibles en la densidad de materia gris de su cerebro. No es fe. No es creencia. Es neurociencia.",
+      "citation": "Hölzel et al. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43.",
+      "duration_seconds": 35
+    },
+    {
+      "n": 3,
+      "type": "content",
+      "title": "Espiritualidad consciente: una definición",
+      "bullets": [
+        "No es creer sin cuestionar",
+        "Es entrenar tu atención y autoconocimiento",
+        "Combina tradición simbólica con evidencia",
+        "Práctica verificable, no fe ciega"
+      ],
+      "narration": "Cuando hablamos de espiritualidad consciente, no hablamos de creer en algo porque alguien te lo dice. Hablamos de entrenar tu capacidad de atención y de autoconocimiento… utilizando herramientas que combinan siglos de tradición simbólica con décadas de investigación científica. <break time=\"0.5s\"/> Es una práctica verificable. Puedes medir sus efectos. Y eso es exactamente lo que vamos a hacer juntas en este curso.",
+      "duration_seconds": 30
+    },
+    {
+      "n": 4,
+      "type": "content",
+      "title": "Tres pilares de la espiritualidad consciente",
+      "bullets": [
+        "Atención: entrenar la mente como un músculo",
+        "Autoconocimiento: entender tus patrones",
+        "Conexión: sentirte parte de algo mayor"
+      ],
+      "narration": "La espiritualidad consciente se sostiene sobre tres pilares. El primero es la atención… la capacidad de dirigir tu mente donde tú decides, no donde ella quiere ir. El segundo es el autoconocimiento… comprender tus patrones emocionales, tus ciclos, tus reacciones automáticas. Y el tercero es la conexión… esa sensación profunda de formar parte de algo más grande que tú misma. <break time=\"0.5s\"/> Los tres son entrenables. Y los tres tienen evidencia científica detrás.",
+      "duration_seconds": 35
+    },
+    {
+      "n": 5,
+      "type": "science",
+      "title": "Tu cerebro cambia con la práctica",
+      "bullets": [
+        "Lazar 2005: meditadores con corteza más gruesa",
+        "Davidson 2003: más actividad prefrontal izquierda",
+        "Hölzel 2011: reducción del volumen de la amígdala"
+      ],
+      "narration": "Vamos a hablar de ciencia. En dos mil cinco, Sara Lazar y su equipo del Hospital General de Massachusetts descubrieron que los meditadores experimentados tenían una corteza cerebral más gruesa en áreas asociadas a la atención y la percepción sensorial. <break time=\"0.5s\"/> Dos años antes, Richard Davidson, en la Universidad de Wisconsin, había demostrado que la meditación aumenta la actividad en la corteza prefrontal izquierda… la zona asociada a emociones positivas y resiliencia. <break time=\"0.5s\"/> Y el estudio de Hölzel que te mencioné al principio confirmó que solo ocho semanas de práctica reducen el volumen de la amígdala… la estructura cerebral responsable del miedo y el estrés.",
+      "citation": "Lazar et al. (2005). Meditation experience is associated with increased cortical thickness. NeuroReport, 16(17), 1893-1897. | Davidson et al. (2003). Alterations in brain and immune function produced by mindfulness meditation. Psychosomatic Medicine, 65(4), 564-570.",
+      "duration_seconds": 50
+    },
+    {
+      "n": 6,
+      "type": "content",
+      "title": "Neuroplasticidad: puedes cambiar tu cableado",
+      "bullets": [
+        "Tu cerebro no es fijo: se adapta",
+        "Cada experiencia repetida crea nuevas conexiones",
+        "Maguire 2000: taxistas de Londres e hipocampo"
+      ],
+      "narration": "El concepto clave aquí es la neuroplasticidad. Tu cerebro no es una máquina fija. Es un órgano vivo que se reorganiza constantemente en respuesta a tus experiencias. <break time=\"0.5s\"/> Hay un estudio precioso de Eleanor Maguire del año dos mil que lo ilustra perfectamente. Estudió a los taxistas de Londres… que tienen que memorizar veinticinco mil calles para obtener su licencia. ¿Qué encontró? Que su hipocampo, la zona del cerebro asociada a la memoria espacial, era significativamente más grande que el de personas que no conducían taxis. <break time=\"0.5s\"/> El cerebro creció, literalmente, porque lo entrenaron. Y lo mismo ocurre con la meditación, con la atención, con el autoconocimiento.",
+      "citation": "Maguire et al. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403.",
+      "duration_seconds": 50
+    },
+    {
+      "n": 7,
+      "type": "quote",
+      "title": "La intuición es el resultado de la experiencia acumulada procesada por tu inconsciente",
+      "subtitle": "Daniel Kahneman, Premio Nobel de Economía",
+      "narration": "Kahneman lo expresó mejor que nadie. Lo que llamamos intuición no es magia. Es experiencia procesada a velocidades que tu mente consciente no puede alcanzar. <break time=\"0.8s\"/> Cuando sientes que algo está bien o mal sin poder explicarlo… eso es tu cerebro procesando miles de señales simultáneas. Y esa capacidad se puede entrenar.",
+      "duration_seconds": 22
+    },
+    {
+      "n": 8,
+      "type": "practice",
+      "title": "Tu primera práctica: 3 minutos de atención",
+      "bullets": [
+        "Siéntate cómoda y cierra los ojos",
+        "Respira: 4 segundos dentro, 6 segundos fuera",
+        "Observa tus pensamientos sin juzgar",
+        "Cuando tu mente se vaya, tráela de vuelta"
+      ],
+      "narration": "Vamos a hacer tu primera práctica ahora mismo. Solo necesitas tres minutos. <break time=\"0.8s\"/> Siéntate en una posición cómoda. Cierra los ojos si te apetece. Y simplemente respira… cuatro segundos al inhalar… <break time=\"1.0s\"/> y seis segundos al exhalar. <break time=\"1.0s\"/> Mientras respiras, observa qué pasa por tu mente. No intentes controlar tus pensamientos… solo obsérvalos, como si fueran nubes pasando por el cielo. Cuando notes que tu mente se ha ido a otro lugar, tráela de vuelta a la respiración. Sin juicio. <break time=\"0.5s\"/> Eso es todo. Eso es atención entrenada. Eso es el primer paso de la espiritualidad consciente.",
+      "duration_seconds": 45
+    },
+    {
+      "n": 9,
+      "type": "summary",
+      "title": "Lo que has aprendido hoy",
+      "bullets": [
+        "Espiritualidad consciente = atención entrenada + ciencia",
+        "Tu cerebro cambia físicamente con la práctica",
+        "La intuición tiene base neurológica real"
+      ],
+      "narration": "Recapitulemos. Hoy has aprendido tres cosas fundamentales. <break time=\"0.5s\"/> Primera: la espiritualidad consciente no es creer… es entrenar tu atención con herramientas respaldadas por ciencia. <break time=\"0.5s\"/> Segunda: tu cerebro tiene neuroplasticidad… cambia físicamente cuando lo entrenas, y hay estudios publicados que lo demuestran. <break time=\"0.5s\"/> Y tercera: lo que llamamos intuición no es magia, tiene una base neurológica real que puedes desarrollar.",
+      "duration_seconds": 30
+    },
+    {
+      "n": 10,
+      "type": "content",
+      "title": "Continúa tu viaje",
+      "bullets": [
+        "Siguiente lección: la ciencia del MBSR",
+        "Practica la respiración 4-6 cada día esta semana"
+      ],
+      "narration": "En la siguiente lección vamos a profundizar en el MBSR, el protocolo de mindfulness con más evidencia científica del mundo. Y te voy a contar cómo Jon Kabat-Zinn convenció a los médicos de un hospital universitario de que meditar era medicina seria. <break time=\"0.5s\"/> Mientras tanto, tu tarea es sencilla: practica la respiración cuatro-seis al menos una vez al día esta semana. Tres minutos. Eso es todo. <break time=\"0.8s\"/> Nos vemos en la siguiente lección.",
+      "duration_seconds": 25
+    }
+  ],
+
+  "quiz": [
+    {
+      "q": "¿Qué demostró el estudio de Hölzel et al. (2011)?",
+      "opts": [
+        "Que los signos del zodíaco afectan la personalidad",
+        "Que 8 semanas de meditación cambian la densidad de materia gris",
+        "Que la Luna influye en el estado de ánimo",
+        "Que el tarot predice el futuro"
+      ],
+      "answer": 1,
+      "why": "Hölzel y su equipo demostraron cambios medibles en la materia gris tras 8 semanas de meditación mindfulness (MBSR)."
+    },
+    {
+      "q": "¿Qué es la neuroplasticidad?",
+      "opts": [
+        "Una enfermedad neurológica",
+        "La capacidad del cerebro de reorganizarse con la experiencia",
+        "Un tipo de cirugía cerebral",
+        "Un suplemento alimenticio"
+      ],
+      "answer": 1,
+      "why": "La neuroplasticidad es la capacidad del cerebro de cambiar su estructura y funcionamiento en respuesta a la experiencia. Maguire (2000) lo demostró con los taxistas de Londres."
+    },
+    {
+      "q": "¿Cuáles son los tres pilares de la espiritualidad consciente según esta lección?",
+      "opts": [
+        "Fe, esperanza y caridad",
+        "Atención, autoconocimiento y conexión",
+        "Tarot, astrología y meditación",
+        "Cuerpo, mente y espíritu"
+      ],
+      "answer": 1,
+      "why": "Los tres pilares son atención (entrenar la mente), autoconocimiento (entender tus patrones) y conexión (sentirte parte de algo mayor)."
+    }
+  ],
+
+  "citations_used": [
+    "Hölzel, B. K., Carmody, J., Vangel, M., Congleton, C., Yerramsetti, S. M., Gard, T., & Lazar, S. W. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43.",
+    "Lazar, S. W., Kerr, C. E., Wasserman, R. H., Gray, J. R., Greve, D. N., Treadway, M. T., ... & Fischl, B. (2005). Meditation experience is associated with increased cortical thickness. NeuroReport, 16(17), 1893-1897.",
+    "Davidson, R. J., Kabat-Zinn, J., Schumacher, J., Rosenkranz, M., Muller, D., Santorelli, S. F., ... & Sheridan, J. F. (2003). Alterations in brain and immune function produced by mindfulness meditation. Psychosomatic Medicine, 65(4), 564-570.",
+    "Maguire, E. A., Gadian, D. G., Johnsrude, I. S., Good, C. D., Ashburner, J., Frackowiak, R. S., & Frith, C. D. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403."
+  ],
+
+  "meta": {
+    "total_narration_words": 782,
+    "estimated_duration_minutes": 11.5,
+    "slide_count": 10,
+    "citation_count": 4,
+    "banned_terms_found": 0
+  }
+}

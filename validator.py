@@ -12,13 +12,20 @@ with open(_SETTINGS_PATH) as f:
 BANNED_TERMS = [t.strip().lower() for t in SETTINGS["brand"]["banned_terms"]]
 QC = SETTINGS["quality_checks"]
 
+# Strip SSML tags for word counting
+_SSML_RE = re.compile(r'<[^>]+>')
+
+
+def _clean_ssml(text: str) -> str:
+    """Remove SSML tags from text for word counting."""
+    return _SSML_RE.sub('', text).strip()
+
 
 def check_banned_terms(text: str) -> list[str]:
     """Return list of banned terms found in text."""
-    text_lower = text.lower()
+    text_lower = _clean_ssml(text).lower()
     found = []
     for term in BANNED_TERMS:
-        # Use word boundary-aware search for short terms
         if len(term) <= 3:
             if re.search(rf'\b{re.escape(term.strip())}\b', text_lower):
                 found.append(term.strip())
@@ -29,9 +36,26 @@ def check_banned_terms(text: str) -> list[str]:
 
 
 def validate_script(script: dict) -> list[str]:
-    """Validate a generated script. Returns list of error strings (empty = valid)."""
+    """Validate a generated script. Returns list of error strings (empty = valid).
+
+    Supports both the original pipeline format and the golden example format:
+    - quiz: [{question, options, correct, explanation}] or [{q, opts, answer, why}]
+    - citations: citations_bibliography or citations_used
+    """
     errors = []
     slides = script.get("slides", [])
+
+    # Quiz-only scripts (type: "quiz") have different validation
+    if script.get("type") == "quiz":
+        questions = script.get("questions", [])
+        if len(questions) < 3:
+            errors.append(f"Too few quiz questions: {len(questions)} < 3")
+        # Check banned terms in questions
+        all_text = " ".join(q.get("q", "") for q in questions)
+        banned = check_banned_terms(all_text)
+        if banned:
+            errors.append(f"Banned terms found in quiz: {banned}")
+        return errors
 
     # Slide count
     if len(slides) < QC["min_slides"]:
@@ -50,9 +74,10 @@ def validate_script(script: dict) -> list[str]:
     all_text = []
 
     for i, slide in enumerate(slides):
-        prefix = f"Slide {i+1} ({slide.get('type', '?')})"
+        slide_num = slide.get("n", i + 1)
+        prefix = f"Slide {slide_num} ({slide.get('type', '?')})"
 
-        # Bullets
+        # Bullets (title/quote/hook may have no bullets — that's OK)
         bullets = slide.get("bullets", [])
         if len(bullets) > QC["max_bullets_per_slide"]:
             errors.append(f"{prefix}: {len(bullets)} bullets > max {QC['max_bullets_per_slide']}")
@@ -61,9 +86,10 @@ def validate_script(script: dict) -> list[str]:
             if word_count > QC["max_words_per_bullet"]:
                 errors.append(f"{prefix}, bullet {j+1}: {word_count} words > max {QC['max_words_per_bullet']}")
 
-        # Narration length
+        # Narration length (strip SSML before counting)
         narration = slide.get("narration", "")
-        word_count = len(narration.split())
+        clean_narration = _clean_ssml(narration)
+        word_count = len(clean_narration.split())
         if word_count < QC["min_narration_words_per_slide"]:
             errors.append(f"{prefix}: narration too short ({word_count} words < {QC['min_narration_words_per_slide']})")
         if word_count > QC["max_narration_words_per_slide"]:
@@ -71,16 +97,20 @@ def validate_script(script: dict) -> list[str]:
 
         # Collect text for banned terms check
         all_text.append(slide.get("title", ""))
+        all_text.append(slide.get("subtitle", ""))
         all_text.extend(bullets)
         all_text.append(narration)
 
-        # Collect citations
+        # Collect citations (from per-slide or bibliography)
         if slide.get("citation"):
             all_citations.append(slide["citation"])
 
-    # Citation count
-    if len(all_citations) < QC["min_citations_per_lesson"]:
-        errors.append(f"Too few citations: {len(all_citations)} < {QC['min_citations_per_lesson']}")
+    # Also count citations from bibliography lists
+    bib = script.get("citations_used", script.get("citations_bibliography", []))
+    citation_count = max(len(all_citations), len(bib))
+
+    if citation_count < QC["min_citations_per_lesson"]:
+        errors.append(f"Too few citations: {citation_count} < {QC['min_citations_per_lesson']}")
 
     # Banned terms across all text
     full_text = " ".join(all_text)
@@ -88,7 +118,7 @@ def validate_script(script: dict) -> list[str]:
     if banned_found:
         errors.append(f"Banned terms found: {banned_found}")
 
-    # Quiz questions
+    # Quiz questions (support both formats)
     quiz = script.get("quiz", [])
     if len(quiz) < 3:
         errors.append(f"Too few quiz questions: {len(quiz)} < 3")

@@ -6,6 +6,34 @@ from pathlib import Path
 
 from validator import SETTINGS, validate_script
 
+# Load golden examples for few-shot prompting
+_SCRIPTS_DIR = Path(__file__).parent / "scripts"
+
+
+def _load_golden_examples() -> list[dict]:
+    """Load golden example scripts from scripts/ directory."""
+    examples = []
+    for path in sorted(_SCRIPTS_DIR.glob("M01_L*")):
+        with open(path) as f:
+            examples.append(json.load(f))
+    return examples
+
+
+def _get_few_shot_example() -> str:
+    """Get a condensed golden example for the system prompt."""
+    # Use L01 as the canonical example (most complete)
+    example_path = _SCRIPTS_DIR / "M01_L01_espiritualidad_consciente"
+    if not example_path.exists():
+        # Try .json extension
+        for p in _SCRIPTS_DIR.glob("M01_L01*"):
+            example_path = p
+            break
+    if example_path.exists():
+        with open(example_path) as f:
+            return f.read()
+    return ""
+
+
 SYSTEM_PROMPT = """\
 Eres la guionista de Selene Academia, una plataforma de formación en español sobre consciencia, \
 espiritualidad basada en evidencia y autoconocimiento. Tu marca personal: "amiga brillante" — \
@@ -19,79 +47,138 @@ cálida, cercana, inteligente, conversacional. Nunca clínica ni fantasiosa.
 NO inventes citas. Usa solo estudios que existan realmente.
 4. NUNCA hacer afirmaciones pseudocientíficas sin respaldo de cita.
 5. Cada slide: máximo 4 bullets, máximo 12 palabras por bullet.
-6. Narración por slide: entre 20 y 150 palabras.
+6. Narración por slide: entre 20 y 150 palabras (sin contar tags SSML).
 7. Tono: conversacional, como si hablaras con una amiga curiosa. Storytelling > lectura.
 
-## ESTRUCTURA DE LA LECCIÓN (seguir siempre)
-1. **hook** (1 slide): Pregunta provocadora o dato sorprendente. Engancha en 10-15 segundos.
-2. **content** (2-4 slides): Desarrollo del tema. Máximo 3 conceptos por lección.
-3. **science** (1-2 slides): Evidencia científica con citas. Visual del hallazgo.
-4. **practice** (1 slide): Ejercicio práctico que puedan hacer ahora mismo.
-5. **summary** (1 slide): Exactamente 3 takeaways clave.
-6. **cta** (1 slide): Siguiente lección o acción concreta.
+## ESTRUCTURA DE LA LECCIÓN
+1. **title** (1 slide): Bienvenida y contexto. Conecta con la lección anterior.
+2. **hook** (1 slide): Dato sorprendente o pregunta provocadora. Engancha en 10-15 segundos.
+3. **content** (2-4 slides): Desarrollo del tema. Máximo 3 conceptos por lección.
+4. **science** (1-2 slides): Evidencia científica con citas. Datos concretos.
+5. **quote** (0-1 slides): Cita célebre con atribución. Opcional.
+6. **practice** (1 slide): Ejercicio práctico guiado que puedan hacer ahora.
+7. **summary** (1 slide): Exactamente 3 takeaways clave.
+8. **content** (1 slide, como CTA): Siguiente lección + tarea para la semana.
 
 ## FORMATO DE SALIDA (JSON estricto)
-Responde SOLO con JSON válido, sin markdown ni explicaciones:
+Responde SOLO con JSON válido, sin markdown ni explicaciones. Sigue EXACTAMENTE esta estructura:
+
+```
 {
-  "lesson_title": "...",
-  "lesson_id": 0,
-  "total_slides": N,
+  "lesson_id": "MXX_LYY",
+  "course": "Despierta tu Brújula Interior",
+  "module": N,
+  "module_name": "Nombre del módulo",
+  "title": "Título de la lección",
+  "duration_minutes": N,
   "slides": [
     {
-      "type": "hook|content|science|practice|summary|cta",
-      "title": "Título corto del slide (max 8 palabras)",
-      "bullets": ["Bullet 1 (max 12 palabras)", "..."],
-      "narration": "Texto completo de narración (20-150 palabras). Conversacional, cálido.",
-      "citation": "Autor (año). Título. Revista. DOI si disponible." // null si no aplica
+      "n": 1,
+      "type": "title|hook|content|science|quote|practice|summary",
+      "title": "Título corto del slide",
+      "subtitle": "Subtítulo opcional o vacío",
+      "bullets": ["Bullet (max 12 palabras)", ...],
+      "narration": "Narración con pausas SSML <break time=\\"0.5s\\"/>...",
+      "citation": "Autor et al. (año). Título. Revista, vol(num), pp." | null,
+      "duration_seconds": N
     }
   ],
   "quiz": [
     {
-      "question": "Pregunta en español",
-      "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-      "correct": "A",
-      "explanation": "Por qué esta es la respuesta correcta (1-2 frases)"
+      "q": "Pregunta en español",
+      "opts": ["Opción A", "Opción B", "Opción C", "Opción D"],
+      "answer": 0,
+      "why": "Explicación de 1-2 frases"
     }
   ],
-  "citations_bibliography": [
-    "Autor (año). Título completo del estudio. Revista, volumen(número), páginas. DOI."
-  ]
+  "citations_used": [
+    "Referencia completa en formato APA"
+  ],
+  "meta": {
+    "total_narration_words": N,
+    "estimated_duration_minutes": N.N,
+    "slide_count": N,
+    "citation_count": N,
+    "banned_terms_found": 0
+  }
 }
+```
 
 ## GUÍA DE NARRACIÓN
-- Empieza cada hook con una pregunta directa: "¿Sabías que...?", "¿Te has preguntado...?"
-- Usa "…" (puntos suspensivos) para pausas narrativas naturales
-- Usa "—" (em-dash) para pausas medias
-- El summary siempre dice: "Vamos a repasar los tres puntos clave de hoy:"
-- El CTA menciona la siguiente lección por nombre
+- Usa pausas SSML dentro de la narración: <break time="0.5s"/> para pausas cortas, <break time="0.8s"/> para medias, <break time="1.0s"/> o más para prácticas guiadas.
+- Usa "…" (puntos suspensivos) para pausas narrativas naturales.
+- Usa "—" (em-dash) para incisos.
+- Los números se escriben en letra: "dos mil cinco" en vez de "2005".
+- El summary siempre empieza con un conteo: "Tres cosas...", "Tres aprendizajes..."
+- El último slide (CTA) menciona la siguiente lección por nombre.
 - Incluye conexiones personales: "Piensa en la última vez que..."
+- La primera lección de cada módulo incluye bienvenida.
+- La última lección de cada módulo menciona que el módulo se ha completado.
 """
 
 
-def build_user_prompt(lesson: dict, lesson_index: int, course: dict, next_lesson_title: str | None) -> str:
+def build_user_prompt(lesson: dict, lesson_index: int, course: dict,
+                      next_lesson_title: str | None) -> str:
     """Build the user prompt for a specific lesson."""
-    prompt = f"""Genera el guión completo para la lección {lesson_index} del curso "{course['title']}".
+    module_num = lesson['module']
+    module_name = course['modules'][str(module_num)]
+
+    # Count lesson within module
+    lessons_in_module = [l for l in course['lessons']
+                         if l['module'] == module_num and l.get('type') != 'quiz']
+    lesson_in_module = next((i+1 for i, l in enumerate(lessons_in_module)
+                            if l['title'] == lesson['title']), 1)
+
+    lesson_id = f"M{module_num:02d}_L{lesson_in_module:02d}"
+
+    prompt = f"""Genera el guión completo para la lección "{lesson['title']}".
 
 ## Datos de la lección
+- **lesson_id**: {lesson_id}
 - **Título**: {lesson['title']}
-- **Módulo**: {lesson['module']} — {course['modules'][str(lesson['module'])]}
+- **Módulo**: {module_num} — {module_name}
+- **Lección en módulo**: {lesson_in_module} de {len(lessons_in_module)}
 - **Descripción y contenido clave**: {lesson['description']}
 - **Duración objetivo**: {lesson['duration_target']} minutos
 - **Nivel del curso**: {course['level']}
 - **Público**: {course['target_audience']}
 """
     if next_lesson_title:
-        prompt += f"\n- **Siguiente lección** (para el CTA): {next_lesson_title}\n"
+        prompt += f"- **Siguiente lección** (para el CTA): {next_lesson_title}\n"
     else:
-        prompt += "\n- **Siguiente paso** (para el CTA): Completar la evaluación final del curso.\n"
+        prompt += "- **Siguiente paso** (para el CTA): Completar la evaluación final del curso.\n"
 
     prompt += """
 ## Recordatorios
-- Mínimo 2 citas peer-reviewed REALES (de las mencionadas en la descripción u otras relevantes)
-- Entre 6 y 16 slides total
-- Responde SOLO con JSON válido
+- Mínimo 2 citas peer-reviewed REALES (preferiblemente 3-4)
+- Entre 6 y 16 slides total (9-10 es ideal)
+- Incluye pausas SSML (<break time="0.5s"/>) en la narración
+- Numera los slides con "n" empezando en 1
+- Incluye duration_seconds estimada por slide
+- El campo "meta" al final con estadísticas de validación
+- Responde SOLO con JSON válido, sin markdown
 """
     return prompt
+
+
+def _build_messages(user_prompt: str) -> list[dict]:
+    """Build messages list with few-shot golden examples."""
+    messages = []
+
+    # Add one golden example as few-shot
+    example = _get_few_shot_example()
+    if example:
+        messages.append({
+            "role": "user",
+            "content": 'Genera el guión completo para la lección "¿Qué es la espiritualidad consciente?" del Módulo 1.'
+        })
+        messages.append({
+            "role": "assistant",
+            "content": example
+        })
+
+    messages.append({"role": "user", "content": user_prompt})
+    return messages
 
 
 def generate_script(lesson: dict, lesson_index: int, course: dict,
@@ -100,7 +187,7 @@ def generate_script(lesson: dict, lesson_index: int, course: dict,
     """Generate and validate a lesson script using Claude API."""
     if dry_run:
         print("  🧪 Dry-run mode: loading sample script")
-        return _load_or_create_sample(lesson, lesson_index, next_lesson_title)
+        return _load_or_create_sample(lesson, lesson_index, course, next_lesson_title)
 
     import anthropic
     client = anthropic.Anthropic()
@@ -111,11 +198,12 @@ def generate_script(lesson: dict, lesson_index: int, course: dict,
 
     for attempt in range(max_retries + 1):
         print(f"  Generating script (attempt {attempt + 1})...")
+        messages = _build_messages(user_prompt)
         response = client.messages.create(
             model=model,
             max_tokens=max_tokens,
             system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_prompt}]
+            messages=messages,
         )
 
         raw_text = response.content[0].text.strip()
@@ -140,8 +228,6 @@ def generate_script(lesson: dict, lesson_index: int, course: dict,
         if not errors:
             print(f"  ✅ Script valid ({len(script['slides'])} slides, "
                   f"{len(script.get('quiz', []))} quiz questions)")
-            # Add metadata
-            script["lesson_id"] = lesson_index
             script["_generation"] = {
                 "model": model,
                 "attempt": attempt + 1,
@@ -165,158 +251,182 @@ Corrígelos y genera el JSON de nuevo. Responde SOLO con JSON válido."""
 
     # Return last attempt even with errors, caller can decide
     script["_validation_errors"] = errors
-    script["lesson_id"] = lesson_index
     return script
 
 
-def _load_or_create_sample(lesson: dict, lesson_index: int,
+def _load_or_create_sample(lesson: dict, lesson_index: int, course: dict,
                            next_lesson_title: str | None) -> dict:
-    """Load sample script from samples/ or generate a template for dry-run testing."""
-    sample_path = Path(__file__).parent / "samples" / f"lesson_{lesson_index:02d}_script.json"
-    if sample_path.exists():
-        with open(sample_path) as f:
-            return json.load(f)
+    """Load golden example from scripts/ if available, else generate template."""
+    # Try to find a matching golden script
+    for path in sorted(_SCRIPTS_DIR.glob("*")):
+        if not path.name.endswith(('.json', '_espiritualidad_consciente')):
+            continue
+        try:
+            with open(path) as f:
+                script = json.load(f)
+            if script.get("title") == lesson["title"]:
+                print(f"  📂 Loaded golden example: {path.name}")
+                return script
+        except (json.JSONDecodeError, KeyError):
+            continue
 
-    # Generate a minimal valid template
+    # Generate a minimal valid template in golden format
+    module_num = lesson['module']
+    module_name = course['modules'][str(module_num)]
+    lessons_in_module = [l for l in course['lessons']
+                         if l['module'] == module_num and l.get('type') != 'quiz']
+    lesson_in_module = next((i+1 for i, l in enumerate(lessons_in_module)
+                            if l['title'] == lesson['title']), 1)
+    lesson_id = f"M{module_num:02d}_L{lesson_in_module:02d}"
     next_title = next_lesson_title or "la siguiente lección"
+
     return {
-        "lesson_title": lesson["title"],
-        "lesson_id": lesson_index,
-        "total_slides": 8,
+        "lesson_id": lesson_id,
+        "course": course["title"],
+        "module": module_num,
+        "module_name": module_name,
+        "title": lesson["title"],
+        "duration_minutes": lesson.get("duration_target", 12),
         "slides": [
             {
-                "type": "hook",
-                "title": "¿Sabías esto sobre tu mente?",
-                "bullets": [
-                    "Tu cerebro cambia con cada experiencia",
-                    "La ciencia lo demuestra desde 2005"
-                ],
-                "narration": f"¿Sabías que tu cerebro es capaz de transformarse físicamente con la práctica? No es una metáfora… es neuroplasticidad. Y hoy vamos a explorar qué significa esto para ti en el contexto de {lesson['title'].lower()}.",
-                "citation": None
+                "n": 1,
+                "type": "title",
+                "title": lesson["title"],
+                "subtitle": f"Módulo {module_num} · {module_name}",
+                "narration": f"Bienvenida a Selene Academia. Hoy exploramos {lesson['title'].lower()}… una lección que cambiará tu perspectiva sobre tu propia mente.",
+                "duration_seconds": 12
             },
             {
+                "n": 2,
+                "type": "hook",
+                "title": "¿Sabías que tu cerebro puede transformarse?",
+                "bullets": [],
+                "narration": "¿Sabías que tu cerebro es capaz de transformarse físicamente con la práctica? No es una metáfora… es neuroplasticidad. En dos mil once, Hölzel y su equipo publicaron en Psychiatry Research que ocho semanas de meditación cambian la densidad de materia gris. <break time=\"0.8s\"/> No es fe. Es neurociencia.",
+                "citation": "Hölzel et al. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43.",
+                "duration_seconds": 30
+            },
+            {
+                "n": 3,
                 "type": "content",
-                "title": "Consciencia: más allá de la creencia",
+                "title": "El poder de la atención entrenada",
                 "bullets": [
-                    "No es fe ciega, es atención entrenada",
-                    "Diferencia entre creer y practicar",
+                    "No es fe ciega, es práctica verificable",
+                    "Entrenar la atención cambia tu cerebro",
                     "La experiencia directa como maestra"
                 ],
-                "narration": "Cuando hablamos de espiritualidad consciente, no estamos hablando de creer en algo sin evidencia. Estamos hablando de entrenar tu atención — de observar tu experiencia interna con la misma curiosidad con la que un científico observa sus datos. La diferencia entre creer y practicar es enorme, y es justo lo que vamos a explorar hoy.",
-                "citation": None
+                "narration": "Cuando hablamos de espiritualidad consciente, no hablamos de creer en algo porque alguien te lo dice. Hablamos de entrenar tu capacidad de atención y de autoconocimiento… utilizando herramientas que combinan siglos de tradición simbólica con décadas de investigación científica. <break time=\"0.5s\"/> Es una práctica verificable. Puedes medir sus efectos.",
+                "duration_seconds": 25
             },
             {
+                "n": 4,
+                "type": "science",
+                "title": "La ciencia de la meditación",
+                "bullets": [
+                    "Lazar 2005: meditadores con corteza más gruesa",
+                    "Davidson 2003: más actividad prefrontal izquierda",
+                    "Hölzel 2011: reducción del volumen amigdalar"
+                ],
+                "narration": "Sara Lazar y su equipo de Harvard descubrieron en dos mil cinco que los meditadores experimentados tenían una corteza cerebral más gruesa en áreas de atención y percepción. <break time=\"0.5s\"/> Richard Davidson demostró que la meditación aumenta la actividad en la corteza prefrontal izquierda… la zona asociada a emociones positivas. <break time=\"0.5s\"/> Y Hölzel confirmó que ocho semanas de práctica reducen el volumen de la amígdala.",
+                "citation": "Lazar et al. (2005). Meditation experience is associated with increased cortical thickness. NeuroReport, 16(17), 1893-1897. | Davidson et al. (2003). Alterations in brain and immune function produced by mindfulness meditation. Psychosomatic Medicine, 65(4), 564-570.",
+                "duration_seconds": 40
+            },
+            {
+                "n": 5,
                 "type": "content",
-                "title": "Tu cerebro: una antena adaptable",
+                "title": "Tu cerebro se adapta a lo que practicas",
                 "bullets": [
                     "Neuroplasticidad: el cerebro cambia siempre",
-                    "Nuevas conexiones se forman con práctica",
-                    "No importa tu edad para empezar"
+                    "Maguire 2000: taxistas de Londres e hipocampo",
+                    "Funciona a cualquier edad"
                 ],
-                "narration": "Tu cerebro no es una estructura fija — es más bien como una antena que se reconfigura constantemente. Cada vez que aprendes algo nuevo, que meditas, que prestas atención de forma deliberada… estás literalmente cambiando la estructura física de tu cerebro. Y lo más fascinante es que esto funciona a cualquier edad.",
-                "citation": None
+                "narration": "El concepto clave es la neuroplasticidad. Tu cerebro se reorganiza constantemente en respuesta a tus experiencias. <break time=\"0.5s\"/> Eleanor Maguire estudió a los taxistas de Londres y descubrió que su hipocampo era significativamente más grande… porque lo entrenaron memorizando veinticinco mil calles. El cerebro creció, literalmente. Y lo mismo ocurre con la meditación.",
+                "citation": "Maguire et al. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403.",
+                "duration_seconds": 30
             },
             {
-                "type": "science",
-                "title": "La evidencia: meditación y cerebro",
-                "bullets": [
-                    "Lazar (2005): meditación aumenta grosor cortical",
-                    "Davidson (2003): activación prefrontal izquierda",
-                    "Cambios medibles en solo 8 semanas"
-                ],
-                "narration": "En 2005, la neurocientífica Sara Lazar y su equipo en Harvard descubrieron algo revolucionario: las personas que meditaban regularmente tenían mayor grosor en la corteza cerebral — la parte del cerebro responsable de la atención y el procesamiento sensorial. Y en 2003, Richard Davidson demostró que la meditación activa la corteza prefrontal izquierda, asociada con emociones positivas y bienestar.",
-                "citation": "Lazar, S. et al. (2005). Meditation experience is associated with increased cortical thickness. Neuroreport, 16(17), 1893-1897."
-            },
-            {
-                "type": "science",
-                "title": "Más evidencia: el poder del entrenamiento",
-                "bullets": [
-                    "Hölzel (2011): reducción del volumen amigdalar",
-                    "La amígdala gestiona el miedo y el estrés",
-                    "Menos reactividad, más calma interior"
-                ],
-                "narration": "Britta Hölzel y su equipo publicaron en Psychiatry Research en 2011 un hallazgo impresionante: después de solo ocho semanas de práctica de mindfulness, los participantes mostraron una reducción significativa en el volumen de la amígdala — esa pequeña estructura cerebral que gestiona nuestras respuestas de miedo y estrés. Menos amígdala hiperactiva significa más calma, más claridad, más capacidad de respuesta consciente.",
-                "citation": "Hölzel, B. et al. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43."
-            },
-            {
+                "n": 6,
                 "type": "practice",
-                "title": "Tu primer ejercicio de atención",
+                "title": "Tu primera práctica: 3 minutos de atención",
                 "bullets": [
-                    "Cierra los ojos durante 60 segundos",
-                    "Observa tu respiración sin cambiarla",
-                    "Nota pensamientos sin juzgarlos",
-                    "Al terminar, observa cómo te sientes"
+                    "Siéntate cómoda y cierra los ojos",
+                    "Respira: 4 segundos dentro, 6 segundos fuera",
+                    "Observa tus pensamientos sin juzgar",
+                    "Cuando tu mente se vaya, tráela de vuelta"
                 ],
-                "narration": "Ahora vamos a hacer algo muy sencillo pero poderoso. Quiero que cierres los ojos — sí, ahora mismo — y durante sesenta segundos simplemente observes tu respiración. No intentes cambiarla, no intentes respirar más profundo ni más lento. Solo observa. Si aparecen pensamientos — y aparecerán — simplemente nota que están ahí y vuelve tu atención a la respiración. Esto es atención entrenada en su forma más pura.",
-                "citation": None
+                "narration": "Vamos a hacer tu primera práctica. Solo tres minutos. <break time=\"0.8s\"/> Siéntate en una posición cómoda. Cierra los ojos. Y simplemente respira… cuatro segundos al inhalar… <break time=\"1.0s\"/> y seis segundos al exhalar. <break time=\"1.0s\"/> Observa qué pasa por tu mente. No intentes controlar tus pensamientos… solo obsérvalos. Cuando tu mente se vaya a otro lugar, tráela de vuelta a la respiración. Sin juicio. <break time=\"0.5s\"/> Eso es atención entrenada.",
+                "duration_seconds": 40
             },
             {
+                "n": 7,
                 "type": "summary",
-                "title": "Tres claves de hoy",
+                "title": "Lo que has aprendido hoy",
                 "bullets": [
-                    "Espiritualidad consciente es atención entrenada",
-                    "Tu cerebro cambia con la práctica meditativa",
-                    "La ciencia respalda estos cambios desde 2003"
+                    "Espiritualidad consciente = atención entrenada + ciencia",
+                    "Tu cerebro cambia físicamente con la práctica",
+                    "La intuición tiene base neurológica real"
                 ],
-                "narration": "Vamos a repasar los tres puntos clave de hoy: Primero, la espiritualidad consciente no es creer a ciegas — es entrenar tu atención de forma deliberada. Segundo, tu cerebro tiene la capacidad de cambiar físicamente con la práctica meditativa, gracias a la neuroplasticidad. Y tercero, esto no es especulación: la ciencia lo respalda con estudios rigurosos desde hace más de veinte años.",
-                "citation": None
+                "narration": "Tres aprendizajes de hoy. <break time=\"0.5s\"/> Primero: la espiritualidad consciente no es creer… es entrenar tu atención con herramientas respaldadas por ciencia. <break time=\"0.5s\"/> Segundo: tu cerebro tiene neuroplasticidad… cambia físicamente cuando lo entrenas. <break time=\"0.5s\"/> Y tercero: lo que llamamos intuición tiene una base neurológica real que puedes desarrollar.",
+                "duration_seconds": 25
             },
             {
-                "type": "cta",
+                "n": 8,
+                "type": "content",
                 "title": "Tu siguiente paso",
                 "bullets": [
-                    f"Próxima lección: {next_title}",
-                    "Practica el ejercicio de atención esta semana"
+                    f"Siguiente lección: {next_title}",
+                    "Practica la respiración 4-6 cada día esta semana"
                 ],
-                "narration": f"En la próxima lección — {next_title} — vamos a profundizar en cómo pasar de la teoría a la práctica diaria. Mientras tanto, te propongo un reto: practica el ejercicio de atención que acabamos de hacer al menos una vez al día durante esta semana. Solo sesenta segundos. Tu cerebro te lo agradecerá.",
-                "citation": None
+                "narration": f"En la siguiente lección — {next_title} — vamos a profundizar en la ciencia detrás de la práctica. <break time=\"0.5s\"/> Tu tarea es sencilla: practica la respiración cuatro-seis al menos una vez al día esta semana. Tres minutos. <break time=\"0.8s\"/> Nos vemos en la siguiente lección.",
+                "duration_seconds": 18
             }
         ],
         "quiz": [
             {
-                "question": "¿Qué demostró el estudio de Sara Lazar (2005) sobre la meditación?",
-                "options": [
-                    "A) Que la meditación aumenta el grosor de la corteza cerebral",
-                    "B) Que la meditación reduce la presión arterial",
-                    "C) Que la meditación mejora la memoria a corto plazo",
-                    "D) Que la meditación cambia el color de la materia gris"
+                "q": "¿Qué demostró el estudio de Hölzel et al. (2011)?",
+                "opts": [
+                    "Que los signos del zodíaco afectan la personalidad",
+                    "Que 8 semanas de meditación cambian la densidad de materia gris",
+                    "Que la Luna influye en el estado de ánimo",
+                    "Que el tarot predice el futuro"
                 ],
-                "correct": "A",
-                "explanation": "Lazar et al. descubrieron que los meditadores experimentados tenían mayor grosor cortical en áreas asociadas con la atención y el procesamiento sensorial."
+                "answer": 1,
+                "why": "Hölzel y su equipo demostraron cambios medibles en la materia gris tras 8 semanas de meditación mindfulness."
             },
             {
-                "question": "¿Qué es la neuroplasticidad?",
-                "options": [
-                    "A) La capacidad del cerebro de cambiar su estructura con la experiencia",
-                    "B) Un tipo de meditación oriental",
-                    "C) Una técnica de respiración profunda",
-                    "D) La resistencia del cerebro a los cambios"
+                "q": "¿Qué es la neuroplasticidad?",
+                "opts": [
+                    "Una enfermedad neurológica",
+                    "La capacidad del cerebro de reorganizarse con la experiencia",
+                    "Un tipo de cirugía cerebral",
+                    "Un suplemento alimenticio"
                 ],
-                "correct": "A",
-                "explanation": "La neuroplasticidad es la capacidad del cerebro de reorganizar sus conexiones neuronales en respuesta a nuevas experiencias y aprendizajes."
+                "answer": 1,
+                "why": "La neuroplasticidad es la capacidad del cerebro de cambiar su estructura en respuesta a la experiencia."
             },
             {
-                "question": "Según el estudio de Hölzel (2011), ¿qué ocurre tras 8 semanas de mindfulness?",
-                "options": [
-                    "A) Aumenta el tamaño del cerebelo",
-                    "B) Se reduce el volumen de la amígdala",
-                    "C) Se duplican las conexiones neuronales",
-                    "D) Desaparece el estrés por completo"
+                "q": "¿Qué descubrió Maguire (2000) en los taxistas de Londres?",
+                "opts": [
+                    "Que tenían peor memoria",
+                    "Que su hipocampo era más grande",
+                    "Que conducir dañaba el cerebro",
+                    "Que no había diferencias cerebrales"
                 ],
-                "correct": "B",
-                "explanation": "Hölzel et al. demostraron que la práctica de mindfulness reduce el volumen de la amígdala, la estructura cerebral asociada con las respuestas de miedo y estrés."
+                "answer": 1,
+                "why": "Maguire encontró que el hipocampo de los taxistas era mayor, proporcional a los años de experiencia."
             }
         ],
-        "citations_bibliography": [
-            "Lazar, S. W., Kerr, C. E., Wasserman, R. H., Gray, J. R., Greve, D. N., Treadway, M. T., ... & Fischl, B. (2005). Meditation experience is associated with increased cortical thickness. Neuroreport, 16(17), 1893-1897.",
-            "Davidson, R. J., Kabat-Zinn, J., Schumacher, J., Rosenkranz, M., Muller, D., Santorelli, S. F., ... & Sheridan, J. F. (2003). Alterations in brain and immune function produced by mindfulness meditation. Psychosomatic Medicine, 65(4), 564-570.",
-            "Hölzel, B. K., Carmody, J., Vangel, M., Congleton, C., Yerramsetti, S. M., Gard, T., & Lazar, S. W. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43."
+        "citations_used": [
+            "Hölzel, B. K., et al. (2011). Mindfulness practice leads to increases in regional brain gray matter density. Psychiatry Research: Neuroimaging, 191(1), 36-43.",
+            "Lazar, S. W., et al. (2005). Meditation experience is associated with increased cortical thickness. NeuroReport, 16(17), 1893-1897.",
+            "Davidson, R. J., et al. (2003). Alterations in brain and immune function produced by mindfulness meditation. Psychosomatic Medicine, 65(4), 564-570.",
+            "Maguire, E. A., et al. (2000). Navigation-related structural change in the hippocampi of taxi drivers. PNAS, 97(8), 4398-4403."
         ],
-        "_generation": {
-            "model": "dry-run",
-            "attempt": 1,
-            "input_tokens": 0,
-            "output_tokens": 0
+        "meta": {
+            "total_narration_words": 520,
+            "estimated_duration_minutes": 7.5,
+            "slide_count": 8,
+            "citation_count": 4,
+            "banned_terms_found": 0
         }
     }
 

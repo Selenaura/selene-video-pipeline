@@ -150,16 +150,17 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
     _add_corner_ornaments(slide, GOLD_DIM)
     _add_watermark(slide)
 
-    # Slide type badge (top-left area)
-    badge_text = f"{icon}  {slide_type.upper()}"
-    _add_text_box(
-        slide,
-        left=Inches(0.8), top=Inches(0.5),
-        width=Inches(3), height=Inches(0.35),
-        text=badge_text,
-        font_name=FONT_BODY, font_size=Pt(10),
-        font_color=accent, bold=True
-    )
+    # Slide type badge (top-left area) — skip for title slides
+    if slide_type != "title":
+        badge_text = f"{icon}  {slide_type.upper()}"
+        _add_text_box(
+            slide,
+            left=Inches(0.8), top=Inches(0.5),
+            width=Inches(3), height=Inches(0.35),
+            text=badge_text,
+            font_name=FONT_BODY, font_size=Pt(10),
+            font_color=accent, bold=True
+        )
 
     # Slide counter (top-right)
     _add_text_box(
@@ -172,32 +173,78 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         alignment=PP_ALIGN.RIGHT
     )
 
-    # Title
-    title_top = Inches(1.1)
-    _add_text_box(
-        slide,
-        left=Inches(0.8), top=title_top,
-        width=Inches(11), height=Inches(0.8),
-        text=title,
-        font_name=FONT_DISPLAY, font_size=Pt(32),
-        font_color=GOLD_LIGHT, bold=True
-    )
-
-    # Separator line under title
-    _add_separator_line(slide, Inches(0.8), Inches(2.0), Inches(11), accent)
-
-    # Bullets
-    bullet_top = Inches(2.3)
-    for i, bullet in enumerate(bullets):
-        bullet_text = f"  •  {bullet}"
+    # Title — centered and larger for title/quote slides
+    if slide_type == "title":
         _add_text_box(
             slide,
-            left=Inches(1.0), top=bullet_top + Inches(i * 0.55),
-            width=Inches(10.5), height=Inches(0.45),
-            text=bullet_text,
-            font_name=FONT_BODY, font_size=Pt(20),
-            font_color=WHITE
+            left=Inches(1.5), top=Inches(2.2),
+            width=Inches(10), height=Inches(1.5),
+            text=title,
+            font_name=FONT_DISPLAY, font_size=Pt(44),
+            font_color=GOLD_LIGHT, bold=True,
+            alignment=PP_ALIGN.CENTER
         )
+        subtitle = slide_data.get("subtitle", "")
+        if subtitle:
+            _add_text_box(
+                slide,
+                left=Inches(1.5), top=Inches(3.8),
+                width=Inches(10), height=Inches(0.5),
+                text=subtitle,
+                font_name=FONT_BODY, font_size=Pt(18),
+                font_color=DIM,
+                alignment=PP_ALIGN.CENTER
+            )
+    elif slide_type == "quote":
+        # Large italic quote centered
+        _add_text_box(
+            slide,
+            left=Inches(1.5), top=Inches(1.5),
+            width=Inches(10), height=Inches(2.5),
+            text=f"❝ {title}",
+            font_name=FONT_DISPLAY, font_size=Pt(28),
+            font_color=GOLD_LIGHT, bold=False,
+            alignment=PP_ALIGN.CENTER
+        )
+        subtitle = slide_data.get("subtitle", "")
+        if subtitle:
+            _add_separator_line(slide, Inches(4), Inches(4.2), Inches(5), GOLD_DIM)
+            _add_text_box(
+                slide,
+                left=Inches(1.5), top=Inches(4.5),
+                width=Inches(10), height=Inches(0.5),
+                text=f"— {subtitle}",
+                font_name=FONT_BODY, font_size=Pt(16),
+                font_color=DIM,
+                alignment=PP_ALIGN.CENTER
+            )
+    else:
+        # Standard title
+        title_top = Inches(1.1)
+        _add_text_box(
+            slide,
+            left=Inches(0.8), top=title_top,
+            width=Inches(11), height=Inches(0.8),
+            text=title,
+            font_name=FONT_DISPLAY, font_size=Pt(32),
+            font_color=GOLD_LIGHT, bold=True
+        )
+        # Separator line under title
+        _add_separator_line(slide, Inches(0.8), Inches(2.0), Inches(11), accent)
+
+    # Bullets (skip for title and quote slides)
+    if slide_type not in ("title", "quote"):
+        bullet_top = Inches(2.3)
+        for i, bullet in enumerate(bullets):
+            bullet_text = f"  •  {bullet}"
+            _add_text_box(
+                slide,
+                left=Inches(1.0), top=bullet_top + Inches(i * 0.55),
+                width=Inches(10.5), height=Inches(0.45),
+                text=bullet_text,
+                font_name=FONT_BODY, font_size=Pt(20),
+                font_color=WHITE
+            )
 
     # Citation (if present, at bottom)
     if citation:

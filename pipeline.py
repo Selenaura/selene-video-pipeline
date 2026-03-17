@@ -18,7 +18,9 @@ from audio_narrator import narrate_lesson
 from script_generator import generate_and_save, load_course
 from slide_builder import build_from_script_file
 from subtitle_generator import process_lesson as generate_subtitles
+from thumbnail_generator import generate_from_script_file as generate_thumbnail
 from validator import validate_script_file
+from video_assembler import assemble_video
 
 ALL_STEPS = ["script", "slides", "audio", "subtitles", "video", "thumbnail"]
 
@@ -82,11 +84,20 @@ def run_pipeline(lesson_index: int, course_id: str, steps: list[str],
         else:
             print(f"  ⚠ No script.json found — run 'script' step first")
 
-    # Future steps (Phase 5+)
-    for step in steps:
-        if step in ("script", "slides", "audio", "subtitles"):
-            continue
-        print(f"\n⏳ Step '{step}' not yet implemented (coming in Phase {ALL_STEPS.index(step) + 1})")
+    if "video" in steps:
+        lesson_dir = Path(output_dir) / f"lesson_{lesson_index:02d}"
+        if (lesson_dir / "slides.pptx").exists():
+            assemble_video(lesson_dir, dry_run=dry_run)
+        else:
+            print(f"  ⚠ No slides.pptx found — run 'slides' step first")
+
+    if "thumbnail" in steps:
+        lesson_dir = Path(output_dir) / f"lesson_{lesson_index:02d}"
+        script_file = lesson_dir / "script.json"
+        if script_file.exists():
+            generate_thumbnail(script_file)
+        else:
+            print(f"  ⚠ No script.json found — run 'script' step first")
 
 
 def run_course(course_id: str, steps: list[str], output_dir: str,

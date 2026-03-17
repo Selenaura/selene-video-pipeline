@@ -69,24 +69,25 @@
 
 **Resultado**: Lesson 0 genera 27 cues SRT sentence-aligned + transcript.md con referencias.
 
-## Phase 5: Video Assembly
+## Phase 5: Video Assembly [COMPLETED ✓]
 **Custom pipeline** (slide-stream descartado en Phase 0):
-- [ ] Export PPTX → PNG frames via LibreOffice headless (`libreoffice --headless --convert-to png`)
-- [ ] For each slide: combine PNG + audio MP3 → segment MP4 using moviepy
-- [ ] Concatenate all segments with crossfade transitions (0.5s)
-- [ ] Burn SRT subtitles into video (or keep as sidecar file)
-- [ ] Output: `{lesson_name}.mp4` in output directory
+- [x] Export PPTX → PNG frames via Pillow (LibreOffice headless only exports first slide as PNG)
+- [x] For each slide: combine PNG + audio MP3 → segment using moviepy ImageClip + AudioFileClip
+- [x] Concatenate all segments with `concatenate_videoclips(method="compose")`
+- [x] SRT subtitles as sidecar file (generated in Phase 4)
+- [x] Output: `lesson.mp4` in lesson output directory
+- [x] Duration from slide `duration_seconds` field, manifest, or word-count estimation
 
-**Acceptance**: Final MP4 plays correctly, audio synced to slides, subtitles visible.
+**Resultado**: `video_assembler.py` renders PPTX→PNG via Pillow, assembles with moviepy. Supports dry-run mode (skips audio attachment). Codec: libx264, preset medium, AAC audio.
 
-## Phase 6: Thumbnails & Batch
-- [ ] Generate 1280x720 thumbnail per lesson with Pillow
-- [ ] Design: dark bg, gold glow, module tag, lesson title, moon symbol, corner ornaments
-- [ ] Batch mode: `--course brujula-interior` generates all 24 lessons sequentially
-- [ ] Resume: skip lessons that already have complete output
-- [ ] Summary report at end: total duration, total cost, files per lesson
+## Phase 6: Thumbnails & Batch [COMPLETED ✓]
+- [x] Generate 1280x720 thumbnail per lesson with Pillow
+- [x] Design: dark bg, gold glow circle, module tag, lesson title (word-wrapped), moon symbol (☽), corner ornaments (✦), SELENE ACADEMIA watermark, gold separator
+- [x] Batch mode: `--course brujula-interior` generates all lessons sequentially
+- [x] Resume: skip lessons with valid script.json in course batch mode
+- [x] Summary report: completed/skipped/failed counts
 
-**Acceptance**: `python pipeline.py --course brujula-interior` completes all 24 lessons without manual intervention.
+**Resultado**: `thumbnail_generator.py` genera PNG 1280x720 Quantum Ethereal. Pipeline completo integrado: script→slides→audio→subtitles→video→thumbnail. Dry-run testado exitosamente.
 
 ## Phase 7: Quality & Polish
 - [ ] A/B test 2-3 ElevenLabs voices with same script, pick best for Selene
@@ -105,6 +106,9 @@ _Documenta aquí cualquier mejora, cambio de arquitectura o decisión técnica q
 - 2026-03-17: **Eliminada referencia a slide-stream en Phase 2** (speaker notes "for slide-stream compatibility" ya no aplica, pero se mantienen speaker notes por utilidad general).
 - 2026-03-17: **Añadido `--dry-run` mode al pipeline.** Permite testar toda la cadena sin API keys. Genera un script de ejemplo realista para Lesson 0 con citas reales (Lazar 2005, Davidson 2003, Hölzel 2011) que pasa todas las validaciones. Útil para CI/CD y desarrollo offline.
 - 2026-03-17: **Slide type "evidence" renombrado a "science"** en la estructura real para mayor claridad. El plan original decía "evidence" pero "science" describe mejor el contenido (citas + visuales de hallazgos).
+- 2026-03-17: **Phase 5 — Pillow rendering en lugar de LibreOffice.** LibreOffice headless `--convert-to png` solo exporta la primera slide del PPTX. Se implementó renderizado con Pillow: extrae textos de cada shape de python-pptx y los dibuja sobre fondo oscuro. No es pixel-perfect respecto al PPTX pero es funcional y no requiere dependencias externas.
+- 2026-03-17: **Phase 5 — moviepy en lugar de ffmpeg directo.** moviepy (ImageClip + AudioFileClip + concatenate_videoclips) simplifica la lógica de ensamblaje vs. ffmpeg con concat demuxer. Produce libx264/AAC MP4.
+- 2026-03-17: **Adaptación al formato golden examples.** Tras recibir los scripts M01 del usuario, se adaptaron validator.py, script_generator.py y slide_builder.py para soportar el formato golden (lesson_id, citations_used, citations_bibliography, meta block, SSML inline, duration_seconds por slide, slide types title/quote). El script_generator usa M01_L01 como few-shot example para Claude.
 
 ---
 

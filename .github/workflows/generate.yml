@@ -1,0 +1,90 @@
+name: Generate Lesson Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "What to generate"
+        required: true
+        type: choice
+        options:
+          - "--lesson 0"
+          - "--lesson 1"
+          - "--lesson 2"
+          - "--lesson 3"
+          - "--lesson 4"
+          - "--lesson 5"
+          - "--lesson 6"
+          - "--lesson 7"
+          - "--lesson 8"
+          - "--lesson 9"
+          - "--lesson 10"
+          - "--lesson 11"
+          - "--lesson 12"
+          - "--lesson 13"
+          - "--lesson 14"
+          - "--lesson 15"
+          - "--lesson 16"
+          - "--lesson 17"
+          - "--lesson 18"
+          - "--lesson 19"
+          - "--lesson 20"
+          - "--lesson 21"
+          - "--lesson 22"
+          - "--lesson 23"
+          - "--course brujula-interior"
+      tts_engine:
+        description: "TTS engine"
+        required: true
+        type: choice
+        default: "elevenlabs"
+        options:
+          - "elevenlabs"
+          - "kokoro"
+      dry_run:
+        description: "Dry run (no API calls)"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg poppler-utils libreoffice-impress
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          FLAGS="${{ inputs.target }} --tts ${{ inputs.tts_engine }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
+          python pipeline.py $FLAGS
+
+      - name: Upload output artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lesson-output
+          path: output/
+          retention-days: 30
+          if-no-files-found: error

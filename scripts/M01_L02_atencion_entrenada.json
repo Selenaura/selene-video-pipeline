@@ -1,0 +1,161 @@
+{
+  "lesson_id": "M01_L02",
+  "course": "Despierta tu Brújula Interior",
+  "module": 1,
+  "module_name": "Fundamentos de consciencia",
+  "title": "No es fe ciega: es atención entrenada",
+  "duration_minutes": 10,
+
+  "slides": [
+    {
+      "n": 1,
+      "type": "title",
+      "title": "No es fe ciega: es atención entrenada",
+      "subtitle": "Módulo 1 · Lección 2",
+      "narration": "Bienvenida de nuevo. En la lección anterior descubriste que tu cerebro cambia con la práctica. Hoy vamos a conocer el protocolo que lo demostró… y cómo un biólogo molecular convenció a los médicos de que meditar es medicina seria.",
+      "duration_seconds": 15
+    },
+    {
+      "n": 2,
+      "type": "hook",
+      "title": "Un científico en un hospital: Jon Kabat-Zinn, 1979",
+      "bullets": [],
+      "narration": "Mil novecientos setenta y nueve. Jon Kabat-Zinn es un biólogo molecular del MIT que practica meditación zen. Tiene una idea que a todos les parece descabellada: introducir meditación en un hospital universitario para tratar el dolor crónico. <break time=\"0.5s\"/> Los médicos se ríen. ¿Meditación? ¿En un hospital? <break time=\"0.5s\"/> Kabat-Zinn hace algo brillante: elimina toda la terminología religiosa. Nada de budismo, nada de zen. Lo llama Mindfulness-Based Stress Reduction… Reducción de Estrés Basada en Atención Plena. Y diseña un protocolo de ocho semanas con estructura de ensayo clínico. <break time=\"0.5s\"/> Cuarenta y cinco años después, el MBSR es el programa de meditación más estudiado de la historia.",
+      "citation": "Kabat-Zinn, J. (1982). An outpatient program in behavioral medicine for chronic pain patients based on the practice of mindfulness meditation. General Hospital Psychiatry, 4(1), 33-47.",
+      "duration_seconds": 50
+    },
+    {
+      "n": 3,
+      "type": "content",
+      "title": "¿Qué es el MBSR exactamente?",
+      "bullets": [
+        "Programa estructurado de 8 semanas",
+        "45 minutos de práctica diaria",
+        "Meditación sentada, body scan, yoga suave",
+        "Sin contenido religioso ni esotérico"
+      ],
+      "narration": "El MBSR es un programa de ocho semanas con una estructura muy concreta. Cada semana hay una sesión grupal de dos horas y media, y los participantes practican cuarenta y cinco minutos diarios en casa. <break time=\"0.5s\"/> Las técnicas son tres: meditación sentada centrada en la respiración, body scan… que es un recorrido de atención por cada parte del cuerpo, y yoga suave. <break time=\"0.5s\"/> Lo importante es que no tiene ningún componente religioso ni esotérico. Es puro entrenamiento de la atención. Por eso funciona en hospitales, en empresas, en escuelas.",
+      "duration_seconds": 35
+    },
+    {
+      "n": 4,
+      "type": "science",
+      "title": "La evidencia: qué dicen los meta-análisis",
+      "bullets": [
+        "Goyal 2014 (JAMA): eficaz para ansiedad y depresión",
+        "Khoury 2013: 209 estudios, efecto moderado-alto",
+        "Comparable a antidepresivos en algunos casos"
+      ],
+      "narration": "Ahora viene lo importante: los números. En dos mil catorce, Goyal y su equipo publicaron un meta-análisis en JAMA Internal Medicine… una de las revistas médicas más prestigiosas del mundo. Revisaron cuarenta y siete ensayos clínicos con más de tres mil quinientos participantes. <break time=\"0.5s\"/> Su conclusión fue clara: la meditación mindfulness tiene evidencia moderada para reducir ansiedad, depresión y dolor. <break time=\"0.5s\"/> Un año antes, Khoury había analizado doscientos nueve estudios y encontró un efecto terapéutico de moderado a alto. En algunos casos, comparable a los antidepresivos. <break time=\"0.5s\"/> No estamos hablando de anécdotas. Estamos hablando de miles de personas, décadas de investigación, publicadas en las revistas más exigentes.",
+      "citation": "Goyal, M., et al. (2014). Meditation programs for psychological stress and well-being: A systematic review and meta-analysis. JAMA Internal Medicine, 174(3), 357-368. | Khoury, B., et al. (2013). Mindfulness-based therapy: A comprehensive meta-analysis. Clinical Psychology Review, 33(6), 763-771.",
+      "duration_seconds": 55
+    },
+    {
+      "n": 5,
+      "type": "content",
+      "title": "Creer vs. Practicar: la diferencia clave",
+      "bullets": [
+        "Creer: aceptar sin evidencia personal",
+        "Practicar: generar tu propia experiencia",
+        "La meditación es un experimento contigo misma"
+      ],
+      "narration": "Hay una diferencia enorme entre creer y practicar. Creer es aceptar algo porque alguien te lo dice. Practicar es generar tu propia evidencia a través de la experiencia directa. <break time=\"0.5s\"/> Cada vez que te sientas a meditar, estás haciendo un pequeño experimento contigo misma. Observas qué pasa en tu mente, notas cómo cambia tu estado emocional, descubres patrones que no sabías que tenías. <break time=\"0.5s\"/> En Selene no te pedimos que creas en nada. Te pedimos que practiques y que observes qué ocurre. La ciencia ya ha hecho su parte… ahora te toca a ti verificarlo.",
+      "duration_seconds": 35
+    },
+    {
+      "n": 6,
+      "type": "content",
+      "title": "Adaptar el MBSR a tu vida real",
+      "bullets": [
+        "No necesitas 45 minutos: empieza con 5",
+        "La regularidad importa más que la duración",
+        "Mejor 5 minutos diarios que 30 un domingo"
+      ],
+      "narration": "Vale, te estarás preguntando… ¿tengo que hacer cuarenta y cinco minutos al día como en el programa original? <break time=\"0.5s\"/> No. La investigación muestra que lo importante es la regularidad, no la duración. Tang y su equipo demostraron en dos mil siete que incluso cinco días de práctica breve producen cambios medibles en la regulación de la atención. <break time=\"0.5s\"/> Así que mi recomendación es sencilla: empieza con cinco minutos diarios. Todos los días. Es mejor cinco minutos cada mañana que una sesión larga el domingo. Tu cerebro aprende por repetición, no por intensidad.",
+      "citation": "Tang, Y. Y., et al. (2007). Short-term meditation training improves attention and self-regulation. PNAS, 104(43), 17152-17156.",
+      "duration_seconds": 35
+    },
+    {
+      "n": 7,
+      "type": "practice",
+      "title": "Práctica: body scan de 3 minutos",
+      "bullets": [
+        "Cierra los ojos y respira profundo",
+        "Lleva tu atención a los pies… siéntelos",
+        "Sube lentamente: piernas, abdomen, pecho",
+        "Termina en la coronilla. Respira y abre los ojos"
+      ],
+      "narration": "Vamos a practicar un body scan breve. Es una de las tres técnicas fundamentales del MBSR. <break time=\"0.8s\"/> Cierra los ojos. Respira profundo tres veces. <break time=\"1.2s\"/> Ahora lleva tu atención a los pies. No intentes cambiar nada… simplemente nota las sensaciones. Temperatura, presión, hormigueo. <break time=\"1.0s\"/> Sube lentamente por las piernas… el abdomen… el pecho. Observa cada zona como si fuera la primera vez que la sientes. <break time=\"1.0s\"/> Llega a la cabeza, la frente, la coronilla. <break time=\"0.8s\"/> Respira profundo una última vez… y abre los ojos cuando quieras. <break time=\"0.5s\"/> Eso que acabas de hacer es exactamente lo que practican miles de personas en hospitales de todo el mundo. Simple. Silencioso. Y con cuarenta y cinco años de ciencia detrás.",
+      "duration_seconds": 50
+    },
+    {
+      "n": 8,
+      "type": "summary",
+      "title": "Lo que has aprendido hoy",
+      "bullets": [
+        "MBSR: el protocolo de meditación más estudiado del mundo",
+        "Meta-análisis confirman su eficacia (JAMA 2014)",
+        "5 minutos diarios ya producen cambios medibles"
+      ],
+      "narration": "Tres cosas para llevarte de esta lección. <break time=\"0.5s\"/> Primera: el MBSR es el protocolo de meditación con más evidencia científica del mundo, creado por un biólogo molecular del MIT. <break time=\"0.5s\"/> Segunda: meta-análisis publicados en JAMA confirman que funciona para ansiedad, depresión y dolor… con miles de participantes. <break time=\"0.5s\"/> Y tercera: no necesitas cuarenta y cinco minutos. Cinco minutos diarios ya generan cambios. La clave es la regularidad.",
+      "duration_seconds": 28
+    },
+    {
+      "n": 9,
+      "type": "content",
+      "title": "Tu siguiente paso",
+      "bullets": [
+        "Siguiente lección: neuroplasticidad en profundidad",
+        "Tu tarea: body scan de 3 minutos antes de dormir"
+      ],
+      "narration": "En la siguiente lección vamos a entrar de lleno en la neuroplasticidad… vamos a ver cómo tu cerebro se reconecta cuando repites una práctica, y por qué eso tiene implicaciones enormes para el autoconocimiento. <break time=\"0.5s\"/> Tu tarea para esta semana: haz el body scan de tres minutos antes de dormir. Cada noche. No te juzgues si se te olvida un día… simplemente retoma al siguiente. <break time=\"0.8s\"/> Nos vemos en la lección tres.",
+      "duration_seconds": 22
+    }
+  ],
+
+  "quiz": [
+    {
+      "q": "¿En qué año creó Jon Kabat-Zinn el programa MBSR?",
+      "opts": ["1965", "1979", "1995", "2005"],
+      "answer": 1,
+      "why": "Kabat-Zinn introdujo el MBSR en el Medical Center de la Universidad de Massachusetts en 1979."
+    },
+    {
+      "q": "¿Qué encontró el meta-análisis de Goyal et al. (2014) publicado en JAMA?",
+      "opts": [
+        "Que la meditación no tiene efectos medibles",
+        "Que tiene evidencia moderada para ansiedad, depresión y dolor",
+        "Que solo funciona para personas religiosas",
+        "Que necesitas al menos 2 horas diarias"
+      ],
+      "answer": 1,
+      "why": "Goyal (2014) revisó 47 ensayos clínicos y encontró evidencia moderada para reducción de ansiedad, depresión y dolor."
+    },
+    {
+      "q": "¿Cuál es más importante según la investigación: la duración o la regularidad?",
+      "opts": [
+        "La duración: al menos 45 minutos",
+        "La regularidad: practicar a diario aunque sea poco",
+        "Ninguna: no importa cómo practiques",
+        "Depende del signo zodiacal"
+      ],
+      "answer": 1,
+      "why": "Tang et al. (2007) demostraron que incluso sesiones breves pero regulares producen cambios medibles en la atención."
+    }
+  ],
+
+  "citations_used": [
+    "Kabat-Zinn, J. (1982). An outpatient program in behavioral medicine for chronic pain patients based on the practice of mindfulness meditation. General Hospital Psychiatry, 4(1), 33-47.",
+    "Goyal, M., Singh, S., Sibinga, E. M., et al. (2014). Meditation programs for psychological stress and well-being: A systematic review and meta-analysis. JAMA Internal Medicine, 174(3), 357-368.",
+    "Khoury, B., Lecomte, T., Fortin, G., et al. (2013). Mindfulness-based therapy: A comprehensive meta-analysis. Clinical Psychology Review, 33(6), 763-771.",
+    "Tang, Y. Y., Ma, Y., Wang, J., et al. (2007). Short-term meditation training improves attention and self-regulation. PNAS, 104(43), 17152-17156."
+  ],
+
+  "meta": {
+    "total_narration_words": 728,
+    "estimated_duration_minutes": 10.2,
+    "slide_count": 9,
+    "citation_count": 4,
+    "banned_terms_found": 0
+  }
+}

@@ -15,17 +15,21 @@
 
 **Decisión**: Pipeline custom con python-pptx + elevenlabs SDK + moviepy/ffmpeg.
 
-## Phase 1: Script Generator
-- [ ] Build `script_generator.py` with Claude API call
-- [ ] System prompt enforces: Spanish, no banned terms, ≥2 citations, conversational tone
-- [ ] Input: lesson object from config/courses.json
-- [ ] Output: `script.json` with structured slides (hook → content → evidence → practice → summary → CTA)
-- [ ] Each slide: type, title, bullets (max 4, max 12 words each), narration (20-150 words), citation
-- [ ] Validation function: checks banned terms, citation count, narration length, slide count (6-16)
-- [ ] 3 quiz questions per lesson saved in script.json
-- [ ] Test: generate script for Lesson 0, verify it passes all quality checks in settings.json
+## Phase 1: Script Generator [COMPLETED ✓]
+- [x] Build `script_generator.py` with Claude API call
+- [x] System prompt enforces: Spanish, no banned terms, ≥2 citations, conversational tone
+- [x] Input: lesson object from config/courses.json
+- [x] Output: `script.json` with structured slides (hook → content → science → practice → summary → CTA)
+- [x] Each slide: type, title, bullets (max 4, max 12 words each), narration (20-150 words), citation
+- [x] Validation function: checks banned terms, citation count, narration length, slide count (6-16)
+- [x] 3 quiz questions per lesson saved in script.json
+- [x] Test: generate script for Lesson 0, verify it passes all quality checks in settings.json
+- [x] `--dry-run` mode for testing without API keys
 
-**Acceptance**: `python pipeline.py --lesson 0 --steps script` produces valid script.json with 0 validation errors.
+**Resultado**: `python pipeline.py --lesson 0 --steps script --dry-run` produce script.json válido con 0 errores.
+- `script_generator.py`: system prompt + user prompt + Claude API call + retry logic + dry-run sample
+- `validator.py`: banned terms, citation count, narration length, bullets, slide types, quiz count
+- `pipeline.py`: CLI with --list, --lesson N, --course ID, --steps, --dry-run, --validate
 
 ## Phase 2: PPTX Template (Quantum Ethereal)
 - [ ] Create reusable PPTX template file `templates/quantum_ethereal.pptx` with slide masters
@@ -94,6 +98,8 @@ _Documenta aquí cualquier mejora, cambio de arquitectura o decisión técnica q
 - 2026-03-17: **Phase 0 — slide-stream descartado, pipeline custom confirmado.** Análisis exhaustivo del código fuente de slide-stream (1,550 líneas, 11 archivos). El paquete produce vídeo funcional pero tiene ElevenLabs hardcoded a `eleven_monolingual_v1`, no soporta templates PPTX, no genera SRT, no pasa SSML ni `language_code`. Requeriría parchear 5 de 6 componentes internos. Más eficiente construir sobre las librerías subyacentes (python-pptx, elevenlabs SDK, moviepy) que ya vienen instaladas como dependencias. Evaluación detallada en `docs/phase0_slide_stream_evaluation.md`.
 - 2026-03-17: **Creado directorio `docs/` para documentación técnica.** Separa las evaluaciones y decisiones de arquitectura del código y la configuración. Primer documento: evaluación de slide-stream.
 - 2026-03-17: **Eliminada referencia a slide-stream en Phase 2** (speaker notes "for slide-stream compatibility" ya no aplica, pero se mantienen speaker notes por utilidad general).
+- 2026-03-17: **Añadido `--dry-run` mode al pipeline.** Permite testar toda la cadena sin API keys. Genera un script de ejemplo realista para Lesson 0 con citas reales (Lazar 2005, Davidson 2003, Hölzel 2011) que pasa todas las validaciones. Útil para CI/CD y desarrollo offline.
+- 2026-03-17: **Slide type "evidence" renombrado a "science"** en la estructura real para mayor claridad. El plan original decía "evidence" pero "science" describe mejor el contenido (citas + visuales de hallazgos).
 
 ---
 

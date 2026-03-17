@@ -27,22 +27,25 @@
     "_selection_guide": "Paso 1: Probar las recomendadas en español. Paso 2: Si ninguna convence, crear una voz custom con Voice Design. Paso 3: Para máxima calidad, hacer Instant Voice Clone con 3+ muestras de audio limpio.",
     "recommended": [
       {
-        "name": "Sarah",
-        "id": "EXAVITQu4vr4xnSDxMaL",
-        "desc": "Female, expressive, social, energetic — Good for narration in Spanish",
-        "use_for": "Lecciones estándar (contenido, ciencia, resúmenes)"
+        "name": "Lourdes",
+        "id": "SbxCN6LQhBInYaeKjhhW",
+        "desc": "Española nativa, cálida y natural — Ideal para narración educativa",
+        "use_for": "Lecciones estándar (contenido, ciencia, resúmenes)",
+        "origin": "España (andaluza)"
       },
       {
-        "name": "Lily",
-        "id": "pFZP5JQG7iQjIQuC4Bku",
-        "desc": "Female, calm young, soothing — Great for meditation/wellness",
-        "use_for": "Meditaciones guiadas, prácticas, body scan"
+        "name": "Cristina",
+        "id": "2VUqK4PEdMj16L6xTN4J",
+        "desc": "Española nativa, 35 años, tono cálido y natural — Buena para educación",
+        "use_for": "Alternativa principal si Lourdes suena demasiado suave",
+        "origin": "España (andaluza)"
       },
       {
-        "name": "Jessica",
-        "id": "cgSgspJ2msm6clMCkdW9",
-        "desc": "Female, warm, conversational — Natural for educational content",
-        "use_for": "Alternativa principal si Sarah suena demasiado energética"
+        "name": "Afrodita",
+        "id": "6Pd8chnUWvPJasJAi15C",
+        "desc": "Española peninsular, suave, narrativa — Ideal para prácticas y meditación",
+        "use_for": "Meditaciones guiadas, prácticas, body scan",
+        "origin": "España (Canarias/peninsular)"
       }
     ],
     "custom_voice_design": {

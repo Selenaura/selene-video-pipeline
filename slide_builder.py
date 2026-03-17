@@ -230,7 +230,7 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
         badge_text = f"{icon}  {slide_type.upper()}"
         _add_text_box(
             slide,
-            left=Inches(0.8), top=Inches(0.5),
+            left=Inches(1.5), top=Inches(0.5),
             width=Inches(3), height=Inches(0.35),
             text=badge_text,
             font_name=FONT_BODY, font_size=Pt(10),
@@ -296,40 +296,40 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
                 alignment=PP_ALIGN.CENTER
             )
     else:
-        # Standard title
-        title_top = Inches(1.1)
+        # Standard title — inset from corner ornaments
+        title_top = Inches(1.3)
         _add_text_box(
             slide,
-            left=Inches(0.8), top=title_top,
-            width=Inches(11), height=Inches(0.8),
+            left=Inches(1.5), top=title_top,
+            width=Inches(10), height=Inches(0.8),
             text=title,
             font_name=FONT_DISPLAY, font_size=Pt(32),
             font_color=GOLD_LIGHT, bold=True
         )
         # Separator line under title
-        _add_separator_line(slide, Inches(0.8), Inches(2.0), Inches(11), accent)
+        _add_separator_line(slide, Inches(1.5), Inches(2.2), Inches(10), accent)
 
     # Bullets (skip for title and quote slides)
     if slide_type not in ("title", "quote"):
-        bullet_top = Inches(2.3)
+        bullet_top = Inches(2.5)
         for i, bullet in enumerate(bullets):
             bullet_text = f"  •  {bullet}"
             _add_text_box(
                 slide,
-                left=Inches(1.0), top=bullet_top + Inches(i * 0.55),
-                width=Inches(10.5), height=Inches(0.45),
+                left=Inches(1.5), top=bullet_top + Inches(i * 0.55),
+                width=Inches(10), height=Inches(0.45),
                 text=bullet_text,
                 font_name=FONT_BODY, font_size=Pt(20),
                 font_color=WHITE
             )
 
-    # Citation (if present, at bottom)
+    # Citation (if present, at bottom — above corner ornaments)
     if citation:
-        _add_separator_line(slide, Inches(0.8), Inches(5.8), Inches(5), GOLD_DIM)
+        _add_separator_line(slide, Inches(1.5), Inches(5.5), Inches(5), GOLD_DIM)
         _add_text_box(
             slide,
-            left=Inches(0.8), top=Inches(5.9),
-            width=Inches(11), height=Inches(0.7),
+            left=Inches(1.5), top=Inches(5.6),
+            width=Inches(10), height=Inches(0.7),
             text=f"📚 {citation}",
             font_name=FONT_BODY, font_size=Pt(11),
             font_color=DIM

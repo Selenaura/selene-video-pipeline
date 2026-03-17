@@ -269,27 +269,45 @@ def _add_bullet(slide, left, top, width, text, accent_color=GOLD):
 
 
 def _add_citation(slide, left, top, width, citation_text):
-    """Add a structured citation block — 20pt, italic, gray."""
-    txBox = slide.shapes.add_textbox(left, top, width, Inches(0.7))
+    """Add a structured citation block — 16pt, italic, gray, split by | into lines."""
+    from pptx.oxml.ns import qn
+
+    # Split multiple citations by | separator
+    citations = [c.strip() for c in citation_text.split("|")]
+
+    txBox = slide.shapes.add_textbox(left, top, width, Inches(1.2))
     tf = txBox.text_frame
     tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.alignment = PP_ALIGN.CENTER
 
-    # Emoji prefix
-    icon_run = p.add_run()
-    icon_run.text = "📚  "
-    icon_run.font.name = FONT_BODY
-    icon_run.font.size = Pt(20)
-    icon_run.font.color.rgb = CITATION_GRAY
+    for idx, cite in enumerate(citations):
+        if idx == 0:
+            p = tf.paragraphs[0]
+        else:
+            p = tf.add_paragraph()
+        p.alignment = PP_ALIGN.CENTER
 
-    # Citation text — italic
-    text_run = p.add_run()
-    text_run.text = citation_text
-    text_run.font.name = FONT_BODY
-    text_run.font.size = Pt(20)
-    text_run.font.color.rgb = CITATION_GRAY
-    text_run.font.italic = True
+        # Line spacing 1.5 for multi-line citations
+        pPr = p._p.get_or_add_pPr()
+        lnSpc = pPr.makeelement(qn('a:lnSpc'), {})
+        spcPct = lnSpc.makeelement(qn('a:spcPct'), {'val': '150000'})
+        lnSpc.append(spcPct)
+        pPr.append(lnSpc)
+
+        # Emoji on first line only
+        prefix = "📚  " if idx == 0 else "      "
+        icon_run = p.add_run()
+        icon_run.text = prefix
+        icon_run.font.name = FONT_BODY
+        icon_run.font.size = Pt(16)
+        icon_run.font.color.rgb = CITATION_GRAY
+
+        # Citation text — italic
+        text_run = p.add_run()
+        text_run.text = cite
+        text_run.font.name = FONT_BODY
+        text_run.font.size = Pt(16)
+        text_run.font.color.rgb = CITATION_GRAY
+        text_run.font.italic = True
 
     return txBox
 
@@ -398,33 +416,47 @@ def build_slide(prs, slide_data: dict, slide_number: int, total_slides: int):
                 alignment=PP_ALIGN.CENTER
             )
     else:
-        # Standard title — white, bold, 52pt for mobile legibility
+        # --- Vertically center the content block ---
+        # Usable area: top ~1.1" (below ornaments) to ~6.4" (above watermark)
+        area_top = Inches(1.1)
+        area_bottom = Inches(6.4)
+        area_h = area_bottom - area_top  # ~5.3"
+
+        # Calculate content block height
+        title_h = Inches(1.0)         # 52pt title
+        sep_gap = Inches(0.35)        # separator + gap
+        bullet_spacing = Inches(0.85) # per bullet
+        n_bullets = len(bullets)
+        citation_h = Inches(1.4) if citation else 0  # divider + 2-line citation
+
+        block_h = title_h + sep_gap + (n_bullets * bullet_spacing) + citation_h
+        content_top = area_top + max(0, (area_h - block_h) / 2)
+
+        # Title — white, bold, 52pt
         _add_text_box(
             slide,
-            left=PAD_H, top=PAD_V,
+            left=PAD_H, top=int(content_top),
             width=CONTENT_W, height=Inches(1.0),
             text=title,
             font_name=FONT_DISPLAY, font_size=Pt(52),
             font_color=BODY_WHITE, bold=True
         )
         # Separator line under title
-        _add_separator_line(slide, PAD_H, Inches(1.8), CONTENT_W, accent)
+        sep_top = int(content_top + title_h)
+        _add_separator_line(slide, PAD_H, sep_top, CONTENT_W, accent)
 
-    # Bullets (skip for title and quote slides)
-    if slide_type not in ("title", "quote"):
-        bullet_top = Inches(2.1)
+        # Bullets
+        bullet_start = int(content_top + title_h + sep_gap)
         for i, bullet in enumerate(bullets):
-            _add_bullet(slide, PAD_H, bullet_top + Inches(i * 0.85),
+            _add_bullet(slide, PAD_H, int(bullet_start + Inches(i * 0.85)),
                         CONTENT_W, bullet, accent)
 
-    # Citation block — visible, with mini divider separator
-    if citation:
-        # Mini divider to separate content from citation
-        mini_div_w = Inches(2.5)
-        mini_div_left = (Inches(13.333) - mini_div_w) / 2
-        _add_divider(slide, top=Inches(5.4))
-        # Divider already uses 40% width; place citation below
-        _add_citation(slide, PAD_H, Inches(5.9), CONTENT_W, citation)
+        # Citation block — mini divider + multi-line citation
+        if citation:
+            cite_div_top = int(bullet_start + n_bullets * bullet_spacing + Inches(0.15))
+            _add_divider(slide, top=cite_div_top)
+            cite_top = int(cite_div_top + Inches(0.45))
+            _add_citation(slide, PAD_H, cite_top, CONTENT_W, citation)
 
     # Speaker notes = narration text
     notes_slide = slide.notes_slide
